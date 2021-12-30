@@ -3,6 +3,7 @@
 namespace auth 
 {
 	constexpr auto INTRO_PROP_OBJECT_INDEX = 0;
+	constexpr auto PLAYER_STARTING_MONEY = 250;
 
 	constexpr unsigned short skins[] = {
 		(unsigned short)-1,

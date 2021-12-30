@@ -1,5 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.22.1)
 cmake_policy(SET CMP0077 NEW)
+cmake_policy(SET CMP0042 NEW)
 
 project ("the-hood" LANGUAGES C CXX)
 
@@ -36,7 +37,7 @@ add_library(the-hood SHARED
 )
 
 target_compile_features(the-hood PUBLIC cxx_std_20 c_std_11)
-target_link_libraries(the-hood PUBLIC RakNet tomlplusplus::tomlplusplus effolkronium_random unofficial::libuv::libuv glm::glm fmt::fmt SQLite3 SAMPSDK SAMPGDK)
+target_link_libraries(the-hood PUBLIC RakNet tomlplusplus::tomlplusplus effolkronium_random unofficial::libuv::libuv glm::glm fmt::fmt SQLite3 SAMPSDK SAMPGDK Botan)
 set_target_properties(the-hood
 	PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/server/plugins"
@@ -58,4 +59,5 @@ target_include_directories(the-hood PUBLIC
 	"./lib" 
 	"./lib/robin-hood-hashing/src/include"
 	"./lib/sqlite3"
+	"./lib/botan/include"
 )

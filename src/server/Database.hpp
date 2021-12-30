@@ -56,7 +56,12 @@ namespace sqlite
 	class Database
 	{
 	private:
+		friend class Statement;
+
+		std::mutex _mtx;
+		std::condition_variable _cv;
 		sqlite3* _handle;
+		std::atomic<bool> _safe_stmt_done{ true };
 
 	public:
 		explicit Database(const std::string_view path);
@@ -67,6 +72,7 @@ namespace sqlite
 
 		void Exec(const std::string_view query);
 		std::unique_ptr<Statement> Prepare(const std::string& query);
+		std::unique_ptr<Statement> PrepareLock(const std::string& query);
 	};
 
 	class Statement
@@ -76,10 +82,11 @@ namespace sqlite
 		std::atomic<bool> _has_row{ false };
 		std::atomic<bool> _finished{ false };
 		std::shared_ptr<sqlite::Row> _current_row;
+		std::optional<std::reference_wrapper<std::atomic<bool>>> _safe_stmt_done;
 
 		friend class Row;
 	public:
-		Statement(Database* db, const std::string& query);
+		Statement(Database* db, const std::string& query, std::optional<std::reference_wrapper<std::atomic<bool>>> safe_stmt = std::nullopt);
 		~Statement();
 
 		template<size_t Index, class T>

@@ -126,6 +126,7 @@ public:
 	template<class T>
 	void SetData(const std::string& key, const T& value) { _player_data[key] = std::any{ value }; }
 	inline bool HasData(const std::string& key) { return _player_data.contains(key); }
+	inline void RemoveData(const std::string& key) { _player_data.erase(key); }
 	template<class T>
 	std::optional<T> GetData(const std::string& key) 
 	{ 

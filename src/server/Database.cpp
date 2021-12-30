@@ -1,7 +1,7 @@
 #include "../main.hpp"
 
-sqlite::Statement::Statement(Database* db, const std::string& query)
-	: _handle(db)
+sqlite::Statement::Statement(Database* db, const std::string& query, std::optional<std::reference_wrapper<std::atomic<bool>>> safe_stmt)
+	: _handle(db), _safe_stmt_done(safe_stmt)
 {
 	int error = sqlite3_prepare_v2(db->Handle(), query.c_str(), query.length(), &_statement, nullptr);
 	if (error == SQLITE_ERROR)
@@ -12,6 +12,13 @@ sqlite::Statement::Statement(Database* db, const std::string& query)
 
 sqlite::Statement::~Statement()
 {
+	if (_safe_stmt_done)
+	{
+		std::scoped_lock lk(_handle->_mtx);
+		_safe_stmt_done->get() = true;
+		_handle->_cv.notify_one();
+	}
+
 	sqlite3_finalize(_statement);
 }
 
@@ -114,5 +121,17 @@ void sqlite::Database::Exec(const std::string_view query)
 
 std::unique_ptr<sqlite::Statement> sqlite::Database::Prepare(const std::string& query)
 {
-	return std::make_unique<sqlite::Statement>(this, query);
+	std::unique_lock lk(_mtx);
+	_cv.wait(lk, [&] { return _safe_stmt_done.load(); });
+
+	return std::make_unique<sqlite::Statement>(this, query, std::nullopt);
+}
+
+std::unique_ptr<sqlite::Statement> sqlite::Database::PrepareLock(const std::string& query)
+{
+	std::unique_lock lk(_mtx);
+	_cv.wait(lk, [&] { return _safe_stmt_done.load(); });
+
+	_safe_stmt_done = false;
+	return std::make_unique<sqlite::Statement>(this, query, std::ref(_safe_stmt_done));
 }

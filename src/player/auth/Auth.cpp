@@ -34,41 +34,78 @@ namespace auth
 			const auto screen_blacked = [=] {
 				auto* player = server::player_pool[playerid];
 				
-				// REGISTER HERE
+				std::thread([](std::uint16_t playerid) {
+					CPlayer* player = server::player_pool[playerid];
 
-				player->Flags().set(player::flags::registered, true);
-				player->Flags().set(player::flags::authenticating, false);
+					{
+						std::string password = *player->GetData<std::string>("auth:password");
+						player->RemoveData("auth:password");
+						player->Password() = Botan::argon2_generate_pwhash(password.c_str(), password.size(), Botan::system_rng(), 1, 1024, 1, 2);
 
-				SetPlayerPos(playerid, 2109.1204, -1790.6901, 13.5547);
-				SetPlayerFacingAngle(playerid, 350.1182);
-				SetPlayerInterior(playerid, 0);
-				SetPlayerCameraPos(playerid, 2096.242675, -1779.497558, 15.979070);
-				SetPlayerCameraLookAt(playerid, 2103.439697, -1783.191162, 14.913400, CAMERA_CUT);
-				RemovePlayerAttachedObject(playerid, INTRO_PROP_OBJECT_INDEX);
-				SetPlayerSpecialAction(playerid, SPECIAL_ACTION_SMOKE_CIGGY);
-				ApplyAnimation(playerid, "SMOKING", "null", 4.1, false, false, false, false, 0, false);
-				ApplyAnimation(playerid, "SMOKING", "M_SMKLEAN_LOOP", 4.1, false, false, false, true, 0, false);
+						auto stmt = server::database->Prepare(
+							"INSERT INTO `PLAYERS` "
+								"(NAME, PASSWORD, SEX, AGE, POS_X, POS_Y, POS_Z, ANGLE, VW, INTERIOR, SKIN, CURRENT_CONNECTION, MONEY) "
+							"VALUES "
+								"(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), ?); "
 
-				const auto timer_due = [=](timers::CTimer*) {
-					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
-					ApplyAnimation(playerid, "PED", "WALK_CIVI", 4.1, true, true, true, true, 0, false);
-					InterpolateCameraPos(playerid, 2100.242675, -1779.497558, 15.979070, 2109.331542, -1790.645874, 14.679038, 4000, CAMERA_CUT);
-					InterpolateCameraLookAt(playerid, 2103.439697, -1783.191162, 14.913400, 2109.276855, -1785.655639, 14.370956, 4000, CAMERA_CUT);
+							// to-do: make a Database::PrepareLock function that locks until a statement is finished
+							"SELECT `ID` FROM `PLAYERS` WHERE `NAME` = ? LIMIT 1;"
+						);
 
-					const auto give_controls_timer = [=](timers::CTimer*) {
-						PlayerPlaySound(playerid, 5205, 0.0, 0.0, 0.0);
-						ClearAnimations(playerid, false);
-						server::player_pool[playerid]->ToggleWidescreen(false);
-						server::player_pool[playerid]->ClearChat();
-						SetCameraBehindPlayer(playerid);
-						TogglePlayerControllable(playerid, true);
-						SetPlayerVirtualWorld(playerid, 0);
+						stmt->Bind<1>(player->Name());
+						stmt->Bind<2>(player->Password());
+						stmt->Bind<3>(player->Sex());
+						stmt->Bind<4>(player->Age());
+						stmt->Bind<5>(2110.2029f);
+						stmt->Bind<6>(-1784.2820f);
+						stmt->Bind<7>(13.3874f);
+						stmt->Bind<8>(350.1182f);
+						stmt->Bind<9>(0);
+						stmt->Bind<10>(0);
+						stmt->Bind<11>(player->Skin());
+						stmt->Bind<12>(PLAYER_STARTING_MONEY);
+						stmt->Bind<13>(player->Name());
 
-						server::player_pool[playerid]->Flags().set(player::flags::in_game, true);
+						stmt->Step();
+						stmt->Step();
+						auto row = stmt->Row();
+						player->AccountId() = row->Get<unsigned>("ID").value_or(0U);
+					}
+
+					player->Flags().set(player::flags::registered, true);
+					player->Flags().set(player::flags::authenticating, false);
+
+					SetPlayerPos(playerid, 2109.1204, -1790.6901, 13.5547);
+					SetPlayerFacingAngle(playerid, 350.1182);
+					SetPlayerInterior(playerid, 0);
+					SetPlayerCameraPos(playerid, 2096.242675, -1779.497558, 15.979070);
+					SetPlayerCameraLookAt(playerid, 2103.439697, -1783.191162, 14.913400, CAMERA_CUT);
+					RemovePlayerAttachedObject(playerid, INTRO_PROP_OBJECT_INDEX);
+					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_SMOKE_CIGGY);
+					ApplyAnimation(playerid, "SMOKING", "null", 4.1, false, false, false, false, 0, false);
+					ApplyAnimation(playerid, "SMOKING", "M_SMKLEAN_LOOP", 4.1, false, false, false, true, 0, false);
+
+					const auto timer_due = [=](timers::CTimer*) {
+						SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+						ApplyAnimation(playerid, "PED", "WALK_CIVI", 4.1, true, true, true, true, 0, false);
+						InterpolateCameraPos(playerid, 2100.242675, -1779.497558, 15.979070, 2109.331542, -1790.645874, 14.679038, 4000, CAMERA_CUT);
+						InterpolateCameraLookAt(playerid, 2103.439697, -1783.191162, 14.913400, 2109.276855, -1785.655639, 14.370956, 4000, CAMERA_CUT);
+
+						const auto give_controls_timer = [=](timers::CTimer*) {
+							PlayerPlaySound(playerid, 5205, 0.0, 0.0, 0.0);
+							ClearAnimations(playerid, false);
+							server::player_pool[playerid]->ToggleWidescreen(false);
+							server::player_pool[playerid]->ClearChat();
+							SetCameraBehindPlayer(playerid);
+							TogglePlayerControllable(playerid, true);
+							SetPlayerVirtualWorld(playerid, 0);
+
+							server::player_pool[playerid]->Flags().set(player::flags::in_game, true);
+						};
+						timers::timer_manager->Once(4000, give_controls_timer);
 					};
-					timers::timer_manager->Once(4000, give_controls_timer);
-				};
-				timers::timer_manager->Once(7500, timer_due);
+					timers::timer_manager->Once(7500, timer_due);
+				}, playerid).detach();
 			};
 			server::player_pool[playerid]->FadeScreen()->Fade(255, screen_blacked);
 

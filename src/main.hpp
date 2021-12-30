@@ -54,6 +54,7 @@
 //
 // STL
 #include "pch.h"
+#include <syncstream>
 
 //
 // Libraries
@@ -85,6 +86,10 @@
 #include <robin_hood.h>
 #include <toml++/toml.h>
 #include <effolkronium/random.hpp>
+#include <botan/hash.h>
+#include <botan/hex.h>
+#include <botan/argon2fmt.h>
+#include <botan/system_rng.h>
 
 #undef MAX_PLAYERS
 #define MAX_PLAYERS 150
@@ -104,7 +109,6 @@ using Random = effolkronium::random_static;
 
 #include "server/Database.hpp"
 #include "server/Commands.hpp"
-
 #include "server/timers/Timer.hpp"
 #include "server/textdraws/TextDrawManager.hpp"
 #include "server/textdraws/TextDraw.hpp"

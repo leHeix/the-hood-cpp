@@ -61,3 +61,36 @@ add_library(RakNet STATIC
 	"raknet/BitStream.cpp"
 )
 target_include_directories(RakNet PUBLIC "./raknet")
+
+#
+## Botan cryptographic library
+#
+
+if(WIN32)
+	set(BOTAN_SRC_DIR "botan/src/win")
+else()
+	set(BOTAN_SRC_DIR "botan/src/linux")
+endif()
+
+add_library(Botan STATIC "${BOTAN_SRC_DIR}/botan_all.cpp")
+target_compile_features(Botan PRIVATE cxx_std_17)
+target_link_libraries(Botan PRIVATE Threads::Threads)
+
+if(MSVC)
+	set(COMPILE_FEATURES_RELEASE /EHs /GR /O2 /Oi /bigobj)
+	set(COMPILE_FEATURES_DEBUG /EHs /GR /Zi /FS /bigobj)
+	set(COMPILE_FEATURES /arch:SSE2 $<IF:$<NOT:$<CONFIG:Debug>>,${COMPILE_FEATURES_RELEASE},${COMPILE_FEATURES_DEBUG}>)
+	set(COMPILER_WARNINGS /W4 /wd4250 /wd4251 /wd4275)
+else()
+	set(COMPILE_FEATURES_RELEASE -O3 -fstack-protector)
+	set(COMPILE_FEATURES_DEBUG -g -fstack-protector)
+	set(COMPILE_FEATURES -msse2 $<IF:$<NOT:$<CONFIG:Debug>>,${COMPILE_FEATURES_RELEASE},${COMPILE_FEATURES_DEBUG}>)
+	set(COMPILER_WARNINGS -Wall -Wextra -Wpedantic -Wshadow -Wstrict-aliasing -Wstrict-overflow=5 -Wcast-align -Wmissing-declarations -Wpointer-arith -Wcast-qual -Wshorten-64-to-32)
+endif()
+
+target_compile_options(Botan PRIVATE ${COMPILER_WARNINGS} ${COMPILE_FEATURES})
+target_include_directories(Botan PRIVATE "botan/include" "botan/include/external")
+target_compile_definitions(Botan PRIVATE
+	BOTAN_DLL=
+	_REENTRANT=
+)
