@@ -1,0 +1,10 @@
+LIBRARY
+EXPORTS
+	Load
+	Unload
+	Supports
+	ProcessTick
+	OnGameModeInit
+	OnPlayerConnect
+	OnPlayerDisconnect
+	OnPublicCall
