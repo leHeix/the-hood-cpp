@@ -161,7 +161,7 @@ void server::TextDrawList::Hide(CPlayer* player)
 {
 	for (auto&& td : _textdraws)
 	{
-		td->Hide();
+		td->Hide(player);
 	}
 
 	DestroyForPlayer(player->PlayerId());

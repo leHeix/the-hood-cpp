@@ -44,6 +44,7 @@ private:
 	// Managers
 	std::unique_ptr<CFadeScreen> _fadescreen;
 	std::unique_ptr<player::CNotificationManager> _notifications;
+	std::unique_ptr<player::CNeedsManager> _needs;
 	server::TextDrawIndexManager _td_indexer{};
 	
 	std::string _ip_address;
@@ -61,8 +62,6 @@ private:
 	int _virtual_world{ 0 };
 	unsigned char _interior{ 0 };
 	int _skin{ 0 };
-	float _hunger{ 0.f };
-	float _thirst{ 0.f };
 	player::rank _rank_level{ player::rank::user };
 	int _phone_number{ 0 };
 	int _played_time{ 0 };
@@ -104,6 +103,8 @@ public:
 	inline const auto* FadeScreen() const noexcept { return _fadescreen.get(); }
 	inline auto* Notifications() noexcept { return _notifications.get(); }
 	inline const auto* Notifications() const noexcept { return _notifications.get(); }
+	inline auto* Needs() noexcept { return _needs.get(); }
+	inline const auto* Needs() const noexcept { return _needs.get(); }
 
 	IO_GETTER_SETTER(TextDraws, _td_indexer)
 	IO_GETTER_SETTER(AccountId, _account_id)
@@ -120,8 +121,6 @@ public:
 	IO_GETTER_SETTER(Interior, _interior)
 	IO_GETTER_SETTER(LastConnection, _last_connection)
 	IO_GETTER_SETTER(Skin, _skin)
-	IO_GETTER_SETTER(Hunger, _hunger)
-	IO_GETTER_SETTER(Thirst, _thirst)
 	IO_GETTER_SETTER(Rank, _rank_level)
 	IO_GETTER_SETTER(PlayedTime, _played_time)
 	IO_GETTER_SETTER(PhoneNumber, _phone_number)

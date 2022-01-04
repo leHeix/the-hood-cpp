@@ -48,7 +48,7 @@ namespace server
         {
             if (Shown(td))
             {
-                _slots.set((*this)[td], false);
+                _slots.set(_ids[td], false);
                 _ids.erase(td);
             }
         }

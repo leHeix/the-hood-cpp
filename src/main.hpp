@@ -116,6 +116,7 @@ class CPlayer;
 
 #include "player/CFadeScreen.hpp"
 #include "player/Notifications.hpp"
+#include "player/Needs.hpp"
 #include "player/auth/Auth.hpp"
 #include "player/CPlayer.hpp"
 #include "player/CPlayerPool.hpp"

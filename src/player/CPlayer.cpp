@@ -3,7 +3,8 @@
 CPlayer::CPlayer(std::uint16_t playerid)
 	:	_playerid(playerid),
 		_fadescreen(std::make_unique<CFadeScreen>(_playerid)),
-		_notifications(std::make_unique<player::CNotificationManager>(this))
+		_notifications(std::make_unique<player::CNotificationManager>(this)),
+		_needs(std::make_unique<player::CNeedsManager>(this))
 {
 	_ip_address.resize(16);
 	GetPlayerIp(playerid, _ip_address.data(), 16);

@@ -107,6 +107,8 @@ namespace auth
 							SetCameraBehindPlayer(playerid);
 							TogglePlayerControllable(playerid, true);
 							SetPlayerVirtualWorld(playerid, 0);
+							player->Needs()->StartUpdating();
+							player->Needs()->ShowBars();
 
 							server::player_pool[playerid]->Flags().set(player::flags::in_game, true);
 						};
@@ -208,6 +210,8 @@ namespace auth
 						player->RegisterConnection();
 
 						player->Notifications()->Show(fmt::format("Bienvenido a The Hood, {}. Tu última conexión fue el ~y~{}~w~.", player->Name(), player->LastConnection()), 5000);
+						player->Needs()->StartUpdating();
+						player->Needs()->ShowBars();
 
 						player->Flags().set(player::flags::in_game, true);
 					};
@@ -405,8 +409,8 @@ namespace auth
 				server::player_pool[playerid]->Interior() = *row->Get<int>("INTERIOR");
 				server::player_pool[playerid]->LastConnection() = *row->Get<std::string>("LAST_CONNECTION");
 				server::player_pool[playerid]->Skin() = *row->Get<int>("SKIN");
-				server::player_pool[playerid]->Hunger() = *row->Get<float>("HUNGER");
-				server::player_pool[playerid]->Thirst() = *row->Get<float>("THIRST");
+				server::player_pool[playerid]->Needs()->SetHunger(*row->Get<float>("HUNGER"));
+				server::player_pool[playerid]->Needs()->SetThirst(*row->Get<float>("THIRST"));
 				server::player_pool[playerid]->Rank() = static_cast<player::rank>(*row->Get<unsigned char>("ADMIN"));
 				server::player_pool[playerid]->PlayedTime() = *row->Get<int>("PLAYED_TIME");
 				server::player_pool[playerid]->PhoneNumber() = *row->Get<int>("PHONE_NUMBER");

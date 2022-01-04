@@ -76,6 +76,7 @@ selectable = 0
 
 ## TextDraw 4
 [[textdraws]]
+player = true
 position = [ 620.000000, 433.000000 ]
 text = "_"
 style = 1
@@ -182,6 +183,7 @@ selectable = 0
 
 ## TextDraw 10
 [[textdraws]]
+player = true
 position = [ 506.000000, 421.000000 ]
 text = "_"
 style = 1
