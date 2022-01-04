@@ -2,6 +2,8 @@
 
 class CFadeScreen
 {
+	mutable std::mutex _mtx;
+
 	bool _in{ true };
 	std::uint16_t _player_id;
 	timers::CTimer* _timer;

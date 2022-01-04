@@ -184,7 +184,7 @@ namespace auth
 					player->Flags().set(player::flags::authenticating, false);
 					player->RemoveData("auth:password");
 
-					const auto screen_blacked = [=] {
+					const auto screen_blacked = [player] {
 						textdraw_manager["auth"]->Hide(player);
 
 						float x, y, z, angle;

@@ -41,7 +41,8 @@ void player::CNotificationManager::MoveRight(timers::CTimer* timer, CPlayer* pla
 
 void player::CNotificationManager::MoveLeft(timers::CTimer* timer, CPlayer* player, std::uint8_t idx)
 {
-	auto& notification = player->Notifications()->_notifications[idx];
+	auto* manager = player->Notifications();
+	auto& notification = manager->_notifications[idx];
 
 	notification.delta -= NOTIFICATION_DELTA;
 	float t = (static_cast<float>(notification.delta) / 150.f);
@@ -51,7 +52,7 @@ void player::CNotificationManager::MoveLeft(timers::CTimer* timer, CPlayer* play
 
 	if (t <= 0.0)
 	{
-		player->Notifications()->_shown.flip(idx);
+		manager->_shown.flip(idx);
 		textdraws->Hide(player);
 		timer->Killed() = true;
 		timers::timer_manager->Delete(timer->ID());
@@ -66,6 +67,13 @@ void player::CNotificationManager::MoveLeft(timers::CTimer* timer, CPlayer* play
 	ptds[3]->SetPosition({ 29.60f - x, 299.f - (46.f * idx) });
 	ptds[4]->SetPosition({ 50.f - x, 299.f - (46.f * idx) });
 
+	while (!manager->_shown.all() && !manager->_pending.empty())
+	{
+		auto& v = manager->_pending.front();
+		manager->Show(std::move(v.message), v.time);
+		manager->_pending.pop();
+	}
+
 	textdraws->Show(player);
 }
 
@@ -78,25 +86,30 @@ bool player::CNotificationManager::Show(const std::string& message, std::uint16_
 	{
 		notification_data data;
 		data.message = message;
-		data.time = std::move(time_ms);
+		data.time = time_ms;
 
 		_pending.push(std::move(data));
 		return false;
 	}
 
 	_shown.flip(idx);
+	_notifications[idx].delta = 0;
+	_notifications[idx].time = time_ms;
 
 	server::TextDrawList* textdraws = textdraw_manager[fmt::format("notification_{}", idx)];
 	
 	float size = 0.208333f;
-	for (size_t i = 0; i < message.length(); i += 45)
+	for (size_t i = 0, j = message.length(); i < j; i += 45)
 		size -= 0.015f;
 
 	std::string split_message = message;
 	server::textdraw::SplitTextDrawString(split_message, 122.5f, size, 1, 1, true);
 
-	_notifications[idx].delta = 0;
-	_notifications[idx].time = time_ms;
+	for (auto&& td : textdraws->GetPlayerTextDraws(_player))
+	{
+		auto pos = td->GetPosition();
+		td->SetPosition({ pos.first - NOT_SUB_VAL, pos.second + (46.f * idx) });
+	}
 
 	textdraws->GetPlayerTextDraws(_player)[4]
 		->SetLetterSize({ size, 1.f })
@@ -108,11 +121,3 @@ bool player::CNotificationManager::Show(const std::string& message, std::uint16_
 
 	return true;
 }
-
-static cell test_opt(std::uint16_t playerid, std::string text)
-{
-	server::player_pool[playerid]->Notifications()->Show(text, 1000);
-	return 0;
-}
-
-static CPublicHook<test_opt> opt("OnPlayerText");

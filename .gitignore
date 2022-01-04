@@ -1,3 +1,4 @@
 /.vs
 /server
 /out
+!/server/scriptfiles/textdraws/*

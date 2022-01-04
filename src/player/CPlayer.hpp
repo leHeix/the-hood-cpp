@@ -29,15 +29,6 @@ namespace player
 		global_operator,
 		admin
 	};
-
-	namespace notifications
-	{
-		struct data
-		{
-			std::string message;
-			std::chrono::duration<unsigned short, std::milli> time;
-		};
-	}
 }
 
 class CPlayer
@@ -80,8 +71,6 @@ private:
 	// Dialogs
 	std::optional<dialog_callback_t> _dialog_callback{ std::nullopt };
 	bool _dialog_shown{ false };
-
-	// Notifications
 
 	std::unordered_map<std::string, std::any> _player_data{};
 	std::optional<std::chrono::steady_clock::time_point> _cancel_td_tick{ std::nullopt };

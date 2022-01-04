@@ -117,6 +117,8 @@ bool server::textdraw::SplitTextDrawString(std::string& string, float max_width,
 
 	while ((i = string.find(' ', i)) != std::string::npos)
 	{
+		++i;
+
 		if (letter_size * (float)GetTextDrawLineWidth(string, font, outline, proportional, previous_space, i) <= max_width)
 			continue;
 
@@ -124,8 +126,26 @@ bool server::textdraw::SplitTextDrawString(std::string& string, float max_width,
 		string.insert(i, "~n~");
 
 		previous_space = i + 3;
-		i += 2;
+		i++;
 	}
+
+	/*
+	if (GetTextDrawLineCount(string) == 1)
+	{
+		int last_break = 0;
+		i = 0u;
+
+		for (; i < string.length(); ++i)
+		{
+			if (GetTextDrawLineWidth(string, font, outline, proportional, last_break, i) < max_width)
+				continue;
+
+			string.insert(i, "~n~");
+			i += 3;
+			last_break = i;
+		}
+	}
+	*/
 
 	return true;
 }

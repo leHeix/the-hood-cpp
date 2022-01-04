@@ -75,8 +75,6 @@ server::TextDrawList::TextDrawList(const std::string_view file)
 			_textdraws.push_back(std::move(td_ptr));
 		}
 	}
-
-	sampgdk::logprintf("[TextDraws] Loaded %i textdraws (%i public, %i per-player) from file %s.", _textdraws.size() + _ptd_data.size(), _textdraws.size(), _ptd_data.size(), file.data());
 }
 
 void server::TextDrawList::CreateForPlayer(CPlayer* player)
@@ -200,6 +198,8 @@ server::TextDrawList* server::TextDrawManager::LoadFile(const std::string_view f
 	{
 		_td_lists[id].list = std::make_unique<TextDrawList>(filepath.string());
 		_td_lists[id].file_csum = std::move(csum_bytes);
+
+		sampgdk::logprintf("[TextDraws] Loaded %i textdraws (%i public, %i per-player) from file %s (CRC32: %s).", _td_lists[id].list->_textdraws.size() + _td_lists[id].list->_ptd_data.size(), _td_lists[id].list->_textdraws.size(), _td_lists[id].list->_ptd_data.size(), file.data(), Botan::hex_encode(_td_lists[id].file_csum).c_str());
 
 		return _td_lists[id].list.get();
 	}

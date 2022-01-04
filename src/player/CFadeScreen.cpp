@@ -22,6 +22,8 @@ CFadeScreen::~CFadeScreen()
 
 void CFadeScreen::Fade(unsigned char callback_alpha, std::function<void()> callback)
 {
+	std::scoped_lock lk(_mtx);
+
 	if (_textdraw->Shown())
 	{
 		Stop();
@@ -53,6 +55,8 @@ void CFadeScreen::Fade(unsigned char callback_alpha, std::function<void()> callb
 
 void CFadeScreen::Stop()
 {
+	std::scoped_lock lk(_mtx);
+
 	if (_timer)
 	{
 		_timer->Killed() = true;
@@ -64,10 +68,12 @@ void CFadeScreen::Stop()
 
 void CFadeScreen::Pause()
 {
+	std::scoped_lock lk(_mtx);
 	_timer->Pause();
 }
 
 void CFadeScreen::Resume()
 {
+	std::scoped_lock lk(_mtx);
 	_timer->Resume();
 }
