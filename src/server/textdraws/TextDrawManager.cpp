@@ -171,22 +171,41 @@ void server::TextDrawList::Hide(CPlayer* player)
 
 server::TextDrawList* server::TextDrawManager::LoadFile(const std::string_view file, const std::string& id)
 {
-	if (_td_lists.contains(id))
-		return _td_lists[id].get();
-
 	std::filesystem::path filepath{ std::filesystem::current_path() / "scriptfiles" / "textdraws" / file };
 	if (!filepath.has_extension())
 		filepath = filepath.replace_extension(".toml");
 
+	std::ifstream hfile{ filepath, std::ios::binary };
+	if (!hfile)
+	{
+		sampgdk::logprintf("[TextDraw] Failed to parse file %s: couldn't open file", file.data());
+		return nullptr;
+	}
+
+	auto hash_function = Botan::HashFunction::create("CRC32");
+	std::stringstream file_content;
+	file_content << hfile.rdbuf();
+	std::string file_content_s = file_content.str();
+	auto csum_bytes = hash_function->process(file_content_s);
+	
+	if (_td_lists.contains(id))
+	{
+		if (_td_lists[id].file_csum == csum_bytes)
+			return _td_lists[id].list.get();
+
+		_td_lists.erase(id);
+	}
+
 	try
 	{
-		_td_lists[id] = std::make_unique<TextDrawList>(filepath.string());
-		return _td_lists[id].get();
+		_td_lists[id].list = std::make_unique<TextDrawList>(filepath.string());
+		_td_lists[id].file_csum = std::move(csum_bytes);
+
+		return _td_lists[id].list.get();
 	}
 	catch (const toml::parse_error& e)
 	{
 		sampgdk::logprintf("[TextDraw] Failed to parse file %s: %s", file.data(), e.what());
-		return nullptr;
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -206,9 +225,9 @@ std::vector<std::unique_ptr<server::PlayerTextDraw>>& server::TextDrawList::GetP
 
 cell server::DestroyPlayerTextDraws(std::uint16_t playerid, std::uint8_t reason)
 {
-	for (auto&& [id, td_list] : textdraw_manager._td_lists)
+	for (auto&& [id, listfile] : textdraw_manager._td_lists)
 	{
-		td_list->_player_textdraws[playerid].clear();
+		listfile.list->_player_textdraws[playerid].clear();
 	}
 
 	return 1;

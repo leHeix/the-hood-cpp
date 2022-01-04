@@ -18,7 +18,7 @@ namespace auth
 
 	cell OnPlayerCancelTextDrawSelection(std::uint16_t playerid)
 	{
-		if (server::player_pool[playerid]->Flags().test(player::flags::authenticating))
+		if (server::player_pool[playerid]->Flags().test(player::flags::authenticating) && !server::player_pool[playerid]->Flags().test(player::flags::customizing_player))
 		{
 			timers::timer_manager->Once(200, [=](timers::CTimer* timer) {
 				SelectTextDraw(playerid, 0xD2B567FF);
@@ -42,34 +42,42 @@ namespace auth
 						player->RemoveData("auth:password");
 						player->Password() = Botan::argon2_generate_pwhash(password.c_str(), password.size(), Botan::system_rng(), 1, 1024, 1, 2);
 
-						auto stmt = server::database->Prepare(
-							"INSERT INTO `PLAYERS` "
-								"(NAME, PASSWORD, SEX, AGE, POS_X, POS_Y, POS_Z, ANGLE, VW, INTERIOR, SKIN, CURRENT_CONNECTION, MONEY) "
-							"VALUES "
-								"(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), ?); "
+						try
+						{
+							{
+								auto stmt = server::database->PrepareLock(
+									"INSERT INTO `PLAYERS` "
+										"(NAME, PASSWORD, SEX, AGE, POS_X, POS_Y, POS_Z, ANGLE, VW, INTERIOR, SKIN, CURRENT_CONNECTION, MONEY) "
+									"VALUES "
+										"(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'), ?); "
+								);
 
-							// to-do: make a Database::PrepareLock function that locks until a statement is finished
-							"SELECT `ID` FROM `PLAYERS` WHERE `NAME` = ? LIMIT 1;"
-						);
+								stmt->Bind<1>(player->Name());
+								stmt->Bind<2>(player->Password());
+								stmt->Bind<3>(player->Sex());
+								stmt->Bind<4>(player->Age());
+								stmt->Bind<5>(2110.2029f);
+								stmt->Bind<6>(-1784.2820f);
+								stmt->Bind<7>(13.3874f);
+								stmt->Bind<8>(350.1182f);
+								stmt->Bind<9>(0);
+								stmt->Bind<10>(0);
+								stmt->Bind<11>(player->Skin());
+								stmt->Bind<12>(PLAYER_STARTING_MONEY);
 
-						stmt->Bind<1>(player->Name());
-						stmt->Bind<2>(player->Password());
-						stmt->Bind<3>(player->Sex());
-						stmt->Bind<4>(player->Age());
-						stmt->Bind<5>(2110.2029f);
-						stmt->Bind<6>(-1784.2820f);
-						stmt->Bind<7>(13.3874f);
-						stmt->Bind<8>(350.1182f);
-						stmt->Bind<9>(0);
-						stmt->Bind<10>(0);
-						stmt->Bind<11>(player->Skin());
-						stmt->Bind<12>(PLAYER_STARTING_MONEY);
-						stmt->Bind<13>(player->Name());
+								stmt->Step();
 
-						stmt->Step();
-						stmt->Step();
-						auto row = stmt->Row();
-						player->AccountId() = row->Get<unsigned>("ID").value_or(0U);
+								player->AccountId() = stmt->LastInsertId();
+							} // Database should be unlocked after the statement gets destroyed
+
+							player->RegisterConnection();
+							
+						}
+						catch (const std::runtime_error& e)
+						{
+							sampgdk::logprintf("[Auth] Failed to register player %i: %s", playerid, e.what());
+							return;
+						}
 					}
 
 					player->Flags().set(player::flags::registered, true);
@@ -152,7 +160,7 @@ namespace auth
 
 		// Login continue button
 		login_textdraws->GetGlobalTextDraws()[19]->SetCallback([](CPlayer* player) -> void {
-			std::cout << "CONTINUE BUTTON CLICKED" << std::endl;
+			player->CancelTextDrawSelection();
 
 			if (!player->HasData("auth:password"))
 			{
@@ -161,41 +169,90 @@ namespace auth
 				return;
 			}
 
-			player->Flags().set(player::flags::customizing_player, true);
+			if (player->Flags().test(player::flags::registered))
+			{
+				std::thread([](CPlayer* player) {
+					std::string password = player->GetData<std::string>("auth:password").value_or("");
+					bool result = Botan::argon2_check_pwhash(password.c_str(), password.length(), player->Password());
+					if (!result)
+					{
+						SelectTextDraw(player->PlayerId(), 0xD2B567FF);
+						player->ShowDialog(DIALOG_STYLE_MSGBOX, "{D2B567}Error", "{3E3D53}- {FFFFFF}La {D2B567}contraseña {FFFFFF}es incorrecta.", "Entendido", "");
+						return;
+					}
 
-			const auto screen_blacked = [=] {
-				player->FadeScreen()->Pause();
-				textdraw_manager["auth"]->Hide(player);
+					player->Flags().set(player::flags::authenticating, false);
+					player->RemoveData("auth:password");
 
-				// highly unnecesary!
-				player->Sex() = Random::get<bool>();
-				player->Age() = Random::get(18, 100);
-				unsigned char skin = Random::get(1, 5) + (5 * player->Sex());
-				player->Skin() = AdjustSkinToRange(player->Age(), skin);
-				selected_skins[player->PlayerId()] = skin;
+					const auto screen_blacked = [=] {
+						textdraw_manager["auth"]->Hide(player);
 
-				auto playerid = player->PlayerId();
-				SetSpawnInfo(playerid, NO_TEAM, player->Skin(), 448.8462f, 508.5697f, 1001.4195f, 284.2451f, 0, 0, 0, 0, 0, 0);
-				TogglePlayerSpectating(playerid, false);
-				player->ToggleWidescreen(false);
-				player->ClearChat();
+						float x, y, z, angle;
+						x = player->Position().x;
+						y = player->Position().y;
+						z = player->Position().z;
+						angle = player->Position().w;
 
-				SetPlayerInterior(playerid, 12);
-				SetPlayerVirtualWorld(playerid, 1 + playerid);
-				SetPlayerCameraPos(playerid, 449.177429f, 510.692901f, 1001.518493f);
-				SetPlayerCameraLookAt(playerid, 447.455413f, 506.018188f, 1001.092041f, CAMERA_CUT);
-				ApplyAnimation(playerid, "CRIB", "null", 0.f, false, false, false, false, 0, false);
-				ApplyAnimation(playerid, "CRIB", "PED_CONSOLE_LOOP", 4.1f, true, false, false, 0, false, false);
-				SetPlayerSpecialAction(playerid, SPECIAL_ACTION_SMOKE_CIGGY);
-				SetPlayerAttachedObject(playerid, INTRO_PROP_OBJECT_INDEX, 18875, 6, 0.15f, 0.15f, 0.0f, 0.0f, 0.0f, -110.59f, 1.0f, 1.0f, 1.0f, -1, -1);
+						auto playerid = player->PlayerId();
+						SetSpawnInfo(playerid, NO_TEAM, player->Skin(), x, y, z, angle, 0, 0, 0, 0, 0, 0);
+						TogglePlayerSpectating(playerid, false);
+						player->ToggleWidescreen(false);
+						player->ClearChat();
 
+						SetPlayerVirtualWorld(playerid, player->VirtualWorld());
+						SetPlayerInterior(playerid, player->Interior());
+						SetPlayerHealth(playerid, player->Health());
+						SetPlayerArmour(playerid, player->Armor());
+						GivePlayerMoney(playerid, player->GetMoney());
+						SetCameraBehindPlayer(playerid);
+						player->RegisterConnection();
+
+						player->Notifications()->Show(fmt::format("Bienvenido a The Hood, {}. Tu última conexión fue el ~y~{}~w~.", player->Name(), player->LastConnection()), 5000);
+
+						player->Flags().set(player::flags::in_game, true);
+					};
+					player->FadeScreen()->Fade(255, screen_blacked);
+				}, player).detach();
+			}
+			else
+			{
 				player->Flags().set(player::flags::customizing_player, true);
-				textdraw_manager["player_customization"]->GetPlayerTextDraws(player)[0]->SetText(std::to_string(player->Age()));
-				textdraw_manager["player_customization"]->Show(player);
 
-				player->FadeScreen()->Resume();
-			};
-			player->FadeScreen()->Fade(255, screen_blacked);
+				const auto screen_blacked = [=] {
+					player->FadeScreen()->Pause();
+					textdraw_manager["auth"]->Hide(player);
+
+					// highly unnecesary!
+					player->Sex() = Random::get<bool>();
+					player->Age() = Random::get(18, 100);
+					unsigned char skin = Random::get(1, 5) + (5 * player->Sex());
+					player->Skin() = AdjustSkinToRange(player->Age(), skin);
+					selected_skins[player->PlayerId()] = skin;
+
+					auto playerid = player->PlayerId();
+					SetSpawnInfo(playerid, NO_TEAM, player->Skin(), 448.8462f, 508.5697f, 1001.4195f, 284.2451f, 0, 0, 0, 0, 0, 0);
+					TogglePlayerSpectating(playerid, false);
+					player->ToggleWidescreen(false);
+					player->ClearChat();
+
+					SetPlayerInterior(playerid, 12);
+					SetPlayerVirtualWorld(playerid, 1 + playerid);
+					SetPlayerCameraPos(playerid, 449.177429f, 510.692901f, 1001.518493f);
+					SetPlayerCameraLookAt(playerid, 447.455413f, 506.018188f, 1001.092041f, CAMERA_CUT);
+					ApplyAnimation(playerid, "CRIB", "null", 0.f, false, false, false, false, 0, false);
+					ApplyAnimation(playerid, "CRIB", "PED_CONSOLE_LOOP", 4.1f, true, false, false, 0, false, false);
+					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_SMOKE_CIGGY);
+					SetPlayerAttachedObject(playerid, INTRO_PROP_OBJECT_INDEX, 18875, 6, 0.15f, 0.15f, 0.0f, 0.0f, 0.0f, -110.59f, 1.0f, 1.0f, 1.0f, -1, -1);
+
+					player->Flags().set(player::flags::customizing_player, true);
+					textdraw_manager["player_customization"]->GetPlayerTextDraws(player)[0]->SetText(std::to_string(player->Age()));
+					textdraw_manager["player_customization"]->Show(player);
+					SelectTextDraw(playerid, 0xD2B567FF);
+
+					player->FadeScreen()->Resume();
+				};
+				player->FadeScreen()->Fade(255, screen_blacked);
+			}
 		});
 
 		// Player customization age input
@@ -251,7 +308,6 @@ namespace auth
 		// Player customization left button
 		pcustom_textdraws->GetGlobalTextDraws()[18]->SetCallback([](CPlayer* player) {
 			unsigned char skin = selected_skins[player->PlayerId()] - (5 * player->Sex());
-			std::cout << "LEFT BUTTON PRESSED WITH SKIN " << (int)skin << " ( " << (int)selected_skins[player->PlayerId()] << ") AND SEX " << player->Sex() << std::endl;
 
 			if (skin > 1 && skin <= 5)
 			{
@@ -264,7 +320,6 @@ namespace auth
 		// Player customization right button
 		pcustom_textdraws->GetGlobalTextDraws()[19]->SetCallback([](CPlayer* player) {
 			unsigned char skin = selected_skins[player->PlayerId()] - (5 * player->Sex());
-			std::cout << "RIGHT BUTTON PRESSED WITH SKIN " << (int)skin << " ( " << (int)selected_skins[player->PlayerId()] << ") AND SEX " << player->Sex() << std::endl;
 			
 			if (skin >= 1 && skin < 5)
 			{
@@ -314,11 +369,12 @@ namespace auth
 			auto& global = textdraws->GetGlobalTextDraws();
 
 			auto stmt = server::database->Prepare(
-				"SELECT `PLAYERS`.*, `PLAYER_WEAPONS`.*, `CONNECTION_LOGS`.`DATE` AS `LAST_CONNECTION` "
-				"FROM `PLAYERS`, `PLAYER_WEAPONS`, `CONNECTION_LOGS` "
-				"WHERE `PLAYERS`.`NAME` = ? "
-				"AND `PLAYER_WEAPONS`.`ACCOUNT_ID` = `PLAYERS`.`ID` "
-				"AND `CONNECTION_LOGS`.`ACCOUNT_ID` = `PLAYERS`.`ID` "
+				"SELECT "
+					"`PLAYERS`.*, `CONNECTION_LOGS`.`DATE` AS `LAST_CONNECTION` " 
+				"FROM `PLAYERS`, `CONNECTION_LOGS` "
+					"WHERE "
+						"`PLAYERS`.`NAME` = ? "
+						"AND `CONNECTION_LOGS`.`ACCOUNT_ID` = `PLAYERS`.`ID` "
 				"ORDER BY `CONNECTION_LOGS`.`DATE` DESC "
 				"LIMIT 1;"
 			);
@@ -341,8 +397,8 @@ namespace auth
 				server::player_pool[playerid]->Armor() = *row->Get<float>("ARMOUR");
 				server::player_pool[playerid]->Position() = glm::vec4{
 					*row->Get<float>("POS_X"),
-					*row->Get<float>("POS_y"),
-					*row->Get<float>("POS_z"),
+					*row->Get<float>("POS_Y"),
+					*row->Get<float>("POS_Z"),
 					*row->Get<float>("ANGLE")
 				};
 				server::player_pool[playerid]->VirtualWorld() = *row->Get<int>("VW");
@@ -357,6 +413,10 @@ namespace auth
 
 				// load weapon slots
 				
+				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[1]->SetText(server::player_pool[playerid]->Name());
+				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[2]->SetText("Tu contraseña");
+				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[3]->SetText("Mostrar contraseña");
+
 				global[7]->PushState();
 				global[19]->PushState();
 
@@ -380,8 +440,8 @@ namespace auth
 				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[0]->SetText(fmt::format("Último inicio de sesión: ~y~{}", server::player_pool[playerid]->LastConnection()));
 				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[1]->SetText(server::player_pool[playerid]->Name());
 
-				for (auto&& td : textdraws->GetPlayerTextDraws(server::player_pool[playerid]))
-					td->Show();
+				for (size_t i = 0, count = textdraws->GetPlayerTextDraws(server::player_pool[playerid]).size() - 2; i <= count; ++i)
+					textdraws->GetPlayerTextDraws(server::player_pool[playerid])[i]->Show();
 			}
 			else
 			{
@@ -393,8 +453,6 @@ namespace auth
 				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[3]->SetText("Mostrar contraseña");
 
 				textdraws->Show(server::player_pool[playerid], 0, -1, 1, -1);
-
-				SendClientMessage(playerid, -1, "no estas registrado mmgbo");
 			}
 
 			SelectTextDraw(playerid, 0xD2B567FF);

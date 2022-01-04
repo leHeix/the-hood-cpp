@@ -1,12 +1,18 @@
 #include "../main.hpp"
 
 sqlite::Statement::Statement(Database* db, const std::string& query, std::optional<std::reference_wrapper<std::atomic<bool>>> safe_stmt)
-	: _handle(db), _safe_stmt_done(safe_stmt)
+	: _handle(db), _query(query), _safe_stmt_done(safe_stmt)
 {
-	int error = sqlite3_prepare_v2(db->Handle(), query.c_str(), query.length(), &_statement, nullptr);
+	int error = sqlite3_prepare_v2(_handle->Handle(), _query.c_str(), _query.length(), &_statement, &_remaining);
 	if (error == SQLITE_ERROR)
 	{
 		throw std::runtime_error{ fmt::format("(Error {}): {}", error, sqlite3_errmsg(_handle->Handle())) };
+	}
+
+	if (_remaining)
+	{
+		while (isspace(*_remaining))
+			_remaining++;
 	}
 }
 
@@ -35,9 +41,24 @@ void sqlite::Statement::Step()
 	
 	if (error == SQLITE_DONE)
 	{
-		sqlite3_clear_bindings(_statement);
-		sqlite3_reset(_statement);
-		_finished = true;
+		if (_remaining && _remaining[0])
+		{
+			sqlite3_finalize(_statement);
+			_statement = nullptr;
+
+			do
+			{
+				int error = sqlite3_prepare_v2(_handle->Handle(), _remaining, -1, &_statement, &_remaining);
+				if (error == SQLITE_ERROR)
+				{
+					throw std::runtime_error{ fmt::format("(Error {}): {}", error, sqlite3_errmsg(_handle->Handle())) };
+				}
+			} while (!_statement);
+		}
+		else
+		{
+			_finished = true;
+		}
 	}
 	else if (error == SQLITE_ROW)
 		_has_row = true;
@@ -71,15 +92,10 @@ sqlite::Row::Row(Statement* stmt)
 {
 	for (size_t col = 0, count = sqlite3_column_count(stmt->_statement); col < count; ++col)
 	{
-		_columns.insert({ sqlite3_column_name(_stmt->_statement, col), sqlite3_value_dup(sqlite3_column_value(_stmt->_statement, col)) });
-	}
-}
+		auto val = sqlite3_value_dup(sqlite3_column_value(_stmt->_statement, col));
+		std::unique_ptr<sqlite3_value, decltype(&sqlite3_value_free)> val_ptr{ val, sqlite3_value_free };
 
-sqlite::Row::~Row()
-{
-	for (auto&& [column, value] : _columns)
-	{
-		sqlite3_value_free(value);
+		_columns.insert({ sqlite3_column_name(_stmt->_statement, col), std::move(val_ptr) });
 	}
 }
 

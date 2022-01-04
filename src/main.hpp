@@ -54,7 +54,6 @@
 //
 // STL
 #include "pch.h"
-#include <syncstream>
 
 //
 // Libraries
@@ -102,6 +101,8 @@ using Random = effolkronium::random_static;
 // Source
 #include "Utils.hpp"
 
+class CPlayer;
+
 #include "hooks/RakUtil.hpp"
 #include "hooks/CRakServer.hpp"
 #include "hooks/CConsole.hpp"
@@ -114,6 +115,7 @@ using Random = effolkronium::random_static;
 #include "server/textdraws/TextDraw.hpp"
 
 #include "player/CFadeScreen.hpp"
+#include "player/Notifications.hpp"
 #include "player/auth/Auth.hpp"
 #include "player/CPlayer.hpp"
 #include "player/CPlayerPool.hpp"

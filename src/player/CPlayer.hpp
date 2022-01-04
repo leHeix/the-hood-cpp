@@ -29,6 +29,15 @@ namespace player
 		global_operator,
 		admin
 	};
+
+	namespace notifications
+	{
+		struct data
+		{
+			std::string message;
+			std::chrono::duration<unsigned short, std::milli> time;
+		};
+	}
 }
 
 class CPlayer
@@ -43,6 +52,7 @@ private:
 
 	// Managers
 	std::unique_ptr<CFadeScreen> _fadescreen;
+	std::unique_ptr<player::CNotificationManager> _notifications;
 	server::TextDrawIndexManager _td_indexer{};
 	
 	std::string _ip_address;
@@ -71,6 +81,8 @@ private:
 	std::optional<dialog_callback_t> _dialog_callback{ std::nullopt };
 	bool _dialog_shown{ false };
 
+	// Notifications
+
 	std::unordered_map<std::string, std::any> _player_data{};
 	std::optional<std::chrono::steady_clock::time_point> _cancel_td_tick{ std::nullopt };
 
@@ -86,6 +98,7 @@ public:
 	void GiveMoney(int money, bool give = true, bool update = true);
 	void SetMoney(int money, bool give = true, bool update = true);
 	inline int GetMoney() const { return _money; }
+	void RegisterConnection();
 
 	// Player Functions
 	void ClearChat(unsigned char lines = 20);
@@ -100,6 +113,8 @@ public:
 
 	inline auto* FadeScreen() noexcept { return _fadescreen.get(); }
 	inline const auto* FadeScreen() const noexcept { return _fadescreen.get(); }
+	inline auto* Notifications() noexcept { return _notifications.get(); }
+	inline const auto* Notifications() const noexcept { return _notifications.get(); }
 
 	IO_GETTER_SETTER(TextDraws, _td_indexer)
 	IO_GETTER_SETTER(AccountId, _account_id)

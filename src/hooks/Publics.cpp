@@ -2,7 +2,7 @@
 
 std::unique_ptr<std::unordered_multimap<std::string, callbacks::public_hook>> callbacks::_hooks{ nullptr };
 
-PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX *amx, const char *name, cell *params, cell *retval)
+PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* params, cell* retval)
 {
     if (!callbacks::_hooks)
     {
@@ -13,8 +13,16 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX *amx, const char *name, cell *pa
     // fixme: make an appropiate way to do this
     if (!strcmp("OnPlayerClickTextDraw", name) && params[2] == INVALID_TEXT_DRAW)
     {
-        name = "OnPlayerCancelTextDrawSelection";
-        params[0] = sizeof(cell);
+        auto playerid = params[1];
+        if (!server::player_pool[playerid]->_cancel_td_tick || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - *server::player_pool[playerid]->_cancel_td_tick) < std::chrono::milliseconds{ 50 + GetPlayerPing(playerid) })
+        {
+            name = "OnPlayerCancelTextDrawSelection";
+            params[0] = sizeof(cell);
+        }
+
+        server::player_pool[playerid]->_cancel_td_tick = std::nullopt;
+        
+        return true;
     }
 
     auto range = callbacks::_hooks->equal_range(name);

@@ -8,13 +8,14 @@ namespace sqlite
 
 	class Row
 	{
+
 		Statement* _stmt;
-		std::unordered_map<std::string, sqlite3_value*> _columns;
+		std::unordered_map<std::string, std::unique_ptr<sqlite3_value, decltype(&sqlite3_value_free)>> _columns;
 
 		friend class Statement;
 	public:
 		explicit Row(Statement* stmt);
-		~Row();
+		~Row() = default;
 
 		template<class T>
 		std::optional<T> Get(const std::string& column)
@@ -22,7 +23,8 @@ namespace sqlite
 			if (!_columns.contains(column))
 				return std::nullopt;
 
-			int type = sqlite3_value_type(_columns[column]);
+			auto* value_ptr = _columns.at(column).get();
+			int type = sqlite3_value_type(value_ptr);
 
 			if (type == SQLITE_NULL)
 			{
@@ -34,21 +36,21 @@ namespace sqlite
 				if (type != SQLITE_INTEGER)
 					return std::nullopt;
 
-				return sqlite3_value_int(_columns[column]);
+				return sqlite3_value_int(value_ptr);
 			}
 			else if constexpr (std::is_floating_point_v<T>)
 			{
 				if (type != SQLITE_FLOAT)
 					return std::nullopt;
 
-				return sqlite3_value_double(_columns[column]);
+				return sqlite3_value_double(value_ptr);
 			}
 			else if constexpr (std::is_same_v<std::remove_cvref_t<T>, std::string>)
 			{
 				if (type != SQLITE_TEXT)
 					return std::nullopt;
 
-				return std::string(reinterpret_cast<const char*>(sqlite3_value_text(_columns[column])));
+				return std::string(reinterpret_cast<const char*>(sqlite3_value_text(value_ptr)));
 			}
 		}
 	};
@@ -58,7 +60,7 @@ namespace sqlite
 	private:
 		friend class Statement;
 
-		std::mutex _mtx;
+		mutable std::mutex _mtx;
 		std::condition_variable _cv;
 		sqlite3* _handle;
 		std::atomic<bool> _safe_stmt_done{ true };
@@ -83,6 +85,8 @@ namespace sqlite
 		std::atomic<bool> _finished{ false };
 		std::shared_ptr<sqlite::Row> _current_row;
 		std::optional<std::reference_wrapper<std::atomic<bool>>> _safe_stmt_done;
+		std::string _query;
+		const char* _remaining{ nullptr };
 
 		friend class Row;
 	public:
@@ -103,11 +107,11 @@ namespace sqlite
 			}
 			else if constexpr (std::is_same_v<std::remove_cvref_t<T>, std::string>)
 			{
-				error = sqlite3_bind_text(_statement, Index, value.c_str(), value.size(), SQLITE_STATIC);
+				error = sqlite3_bind_text(_statement, Index, value.c_str(), -1, SQLITE_STATIC);
 			}
 			else if constexpr (std::is_same_v<std::add_pointer_t<std::remove_const_t<std::remove_pointer_t<T>>>, char*>)
 			{
-				error = sqlite3_bind_text(_statement, Index, value, strlen(value), SQLITE_STATIC);
+				error = sqlite3_bind_text(_statement, Index, value, -1, SQLITE_STATIC);
 			}
 
 			if (error != SQLITE_OK)
@@ -121,5 +125,6 @@ namespace sqlite
 		bool HasRow();
 		// Rows don't depend on the current state of the statement
 		std::shared_ptr<sqlite::Row> Row();
+		inline int LastInsertId() const { return sqlite3_last_insert_rowid(_handle->_handle); }
 	};
 }

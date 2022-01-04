@@ -94,7 +94,13 @@ namespace server
         friend class TextDrawList;
         friend cell server::DestroyPlayerTextDraws(std::uint16_t playerid, std::uint8_t reason);
 
-        std::unordered_map<std::string, std::unique_ptr<TextDrawList>> _td_lists;
+        struct file_list
+        {
+            std::unique_ptr<TextDrawList> list;
+            Botan::secure_vector<uint8_t> file_csum;
+        };
+
+        std::unordered_map<std::string, file_list> _td_lists;
 
     public:
         TextDrawManager() = default;
@@ -103,7 +109,7 @@ namespace server
         TextDrawList* LoadFile(const std::string_view file, const std::string& id);
         TextDrawList* operator[](const std::string& name)
         {
-            return _td_lists.contains(name) ? _td_lists[name].get() : nullptr;
+            return _td_lists.contains(name) ? _td_lists[name].list.get() : nullptr;
         }
     };
 };

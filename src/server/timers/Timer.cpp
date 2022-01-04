@@ -102,8 +102,68 @@ timers::CTimer* timers::CTimerManager::Repeat(unsigned delay_once, unsigned dela
 	return _timers[_max_id].get();
 }
 
+timers::CTimer* timers::CTimerManager::Once(CPlayer* player, unsigned delay, std::function<void(CTimer*, CPlayer*)> callback)
+{
+	std::scoped_lock<std::mutex> lk(_mutex);
+
+	std::function<void(CTimer*)> fun = std::bind(callback, std::placeholders::_1, player);
+
+	auto timer = std::make_unique<CTimer>(uv_default_loop(), delay, std::nullopt, std::move(fun));
+	timer->ID() = ++_max_id;
+	timer->Start();
+
+	_timers[_max_id] = std::move(timer);
+	_player_timers_map.insert({ player, _max_id });
+
+	return _timers[_max_id].get();
+}
+
+/*
+timers::CTimer* timers::CTimerManager::Repeat(CPlayer* player, unsigned delay_once, unsigned delay_repeat, std::function<void(CTimer*, CPlayer*)> callback)
+{
+	std::scoped_lock<std::mutex> lk(_mutex);
+
+	std::function<void(CTimer*)> fun = std::bind(callback, std::placeholders::_1, player);
+
+	auto timer = std::make_unique<CTimer>(uv_default_loop(), delay_once, delay_repeat, std::move(fun));
+	timer->ID() = ++_max_id;
+	timer->Start();
+
+	_timers[_max_id] = std::move(timer);
+	_player_timers_map.insert({ player, _max_id });
+
+	return _timers[_max_id].get();
+}
+*/
+
 void timers::CTimerManager::Delete(unsigned id)
 {
 	std::scoped_lock<std::mutex> lk(_mutex);
 	_timers.erase(id);
+
+	// what the FUCK
+	// black excellence as some may say
+	if (_player_timers_reverse_map.contains(id))
+	{
+		auto rng = _player_timers_map.equal_range(_player_timers_reverse_map[id]);
+		for (auto it = rng.first; it != rng.second; ++it)
+		{
+			if (it->second == id)
+			{
+				_player_timers_map.erase(it);
+				break;
+			}
+		}
+	}
+}
+
+cell timers::OnPlayerDisconnect(std::uint16_t playerid, std::uint8_t reason)
+{
+	auto rg = timer_manager->_player_timers_map.equal_range(server::player_pool[playerid]);
+	for (auto it = rg.first; it != rg.second; ++it)
+	{
+		timer_manager->Delete(it->second);
+	}
+
+	return 1;
 }

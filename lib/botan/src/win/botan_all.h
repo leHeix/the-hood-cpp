@@ -26,7 +26,7 @@
 * Build configuration for Botan 3.0.0-alpha0
 *
 * Automatically generated from
-* 'configure.py --cpu=x86_32 --amalgamation --minimized-build --msvc-runtime=MT --enable-modules=auto_rng,system_rng,argon2,argon2fmt,sha2_32 --disable-shared'
+* 'configure.py --cpu=x86_32 --amalgamation --minimized-build --msvc-runtime=MT --enable-modules=auto_rng,system_rng,argon2,argon2fmt,sha2_32,crc32 --disable-shared'
 *
 * Target
 *  - Compiler: cl  /std:c++17 /EHs /GR /MT /bigobj /O2 /Oi
@@ -112,6 +112,7 @@
 #define BOTAN_HAS_BASE64_CODEC 20131128
 #define BOTAN_HAS_BLAKE2B 20130131
 #define BOTAN_HAS_CPUID 20170917
+#define BOTAN_HAS_CRC32 20131128
 #define BOTAN_HAS_DYNAMIC_LOADER 20160310
 #define BOTAN_HAS_ENTROPY_SOURCE 20151120
 #define BOTAN_HAS_HASH 20180112

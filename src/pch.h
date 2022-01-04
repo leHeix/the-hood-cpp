@@ -24,6 +24,8 @@
 #include <atomic>
 #include <cstring>
 #include <cstdint>
+#include <queue>
+#include <bit>
 
 #else
 

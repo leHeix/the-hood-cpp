@@ -2,15 +2,31 @@
 
 CPlayer::CPlayer(std::uint16_t playerid)
 	:	_playerid(playerid),
-		_fadescreen(std::make_unique<CFadeScreen>(_playerid))
+		_fadescreen(std::make_unique<CFadeScreen>(_playerid)),
+		_notifications(std::make_unique<player::CNotificationManager>(this))
 {
 	_ip_address.resize(16);
 	GetPlayerIp(playerid, _ip_address.data(), 16);
-	_ip_address.shrink_to_fit();
+	_ip_address.erase(_ip_address.find('\0'));
 
 	_name.resize(24);
 	GetPlayerName(playerid, _name.data(), 24);
-	_name.shrink_to_fit();
+	_name.erase(_name.find('\0'));
+}
+
+void CPlayer::RegisterConnection()
+{
+	auto stmt = server::database->Prepare(
+		"INSERT INTO `CONNECTION_LOGS` "
+			"(ACCOUNT_ID, IP_ADDRESS) "
+		"VALUES " 
+			"(?, ?);"
+	);
+
+	stmt->Bind<1>(_account_id);
+	stmt->Bind<2>(_ip_address);
+
+	stmt->Step();
 }
 
 void CPlayer::ClearChat(unsigned char lines)
@@ -118,7 +134,7 @@ cell PlayerDialog_OnDialogResponse(std::uint16_t playerid, short dialogid, bool 
 	if (!player->DialogVisible())
 		return ~0;
 
-	std::replace_if(inputtext.begin(), inputtext.end(), [](char c) { return c == '%'; }, '#');
+	std::replace(inputtext.begin(), inputtext.end(), '%', '#');
 
 	// friend function
 	auto cb = player->_dialog_callback.value_or(nullptr);
