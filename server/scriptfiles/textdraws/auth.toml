@@ -1,0 +1,494 @@
+#
+# TextDraw count: 30
+#
+
+[[textdraws]]
+position = [ 53.000000, -21.000000 ]
+text = "_"
+style = 1
+letter_size = [ -0.233333, 69.850006 ]
+line_size = [ 298.500000, 441.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 336860240
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 139.000000, 26.000000 ]
+text = "Roleplay"
+style = 2
+letter_size = [ 0.237498, 1.300001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = -1685896705
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 138.000000, 14.000000 ]
+text = "THE HOOD"
+style = 3
+letter_size = [ 0.362500, 1.350002 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = -741092353
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 137.000000, 51.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, -0.399996 ]
+line_size = [ 298.500000, 260.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -741092473
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 138.000000, 95.000000 ]
+text = "Usuario"
+style = 2
+letter_size = [ 0.183329, 1.050001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 137.000000, 109.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 1.750002 ]
+line_size = [ 298.500000, 260.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -741092533
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 138.000000, 145.000000 ]
+text = "Contraseña"
+style = 2
+letter_size = [ 0.183329, 1.050001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 138.000000, 62.000000 ]
+text = "Cuenta no registrada"
+style = 2
+letter_size = [ 0.183329, 1.050001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 137.000000, 159.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 1.750002 ]
+line_size = [ 298.500000, 260.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -741092533
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 7.000000, 110.000000 ]
+text = "HUD:radar_gangn"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 13.500000, 13.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 109
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 14.000000, 157.500000 ]
+text = "?"
+style = 3
+letter_size = [ 0.349999, 1.900001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = 116
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 138.000000, 198.000000 ]
+text = "Pregunta de seguridad"
+style = 2
+letter_size = [ 0.183329, 1.050001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 137.000000, 212.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 1.750002 ]
+line_size = [ 298.500000, 260.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -741092533
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 15.000000, 213.500000 ]
+text = "!"
+style = 2
+letter_size = [ 0.333332, 1.450001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = 76
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 137.000000, 262.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 1.750002 ]
+line_size = [ 298.500000, 260.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -741092533
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 14.500000, 260.500000 ]
+text = "$"
+style = 3
+letter_size = [ 0.349999, 1.900001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = 116
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 138.000000, 249.000000 ]
+text = "Código de referido"
+style = 2
+letter_size = [ 0.183329, 1.050001 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 174.000000, 215.000000 ]
+text = "_"
+style = 3
+letter_size = [ 0.224996, 1.000000 ]
+line_size = [ 265.500000, 11.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 135
+bg_color = 336860160
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 88.000000, 312.000000 ]
+text = "ld_bum:blkdot"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 100.000000, 24.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1685896824
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 137.500000, 318.000000 ]
+text = "Continuar"
+style = 3
+letter_size = [ 0.249999, 1.100000 ]
+line_size = [ 10.500000, 97.000000 ]
+outline = 2
+shadow = 0
+alignment = 2
+letter_color = 185
+bg_color = 336860160
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 1
+
+[[textdraws]]
+position = [ 137.000000, 365.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, -0.399996 ]
+line_size = [ 298.500000, 260.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -741092473
+box = 1
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 270.000000, 417.000000 ]
+text = "Jugadores conectados: 100_~n~Record de jugadores: 422_~n~Ultima actualizacion: 12/02/2021"
+style = 2
+letter_size = [ 0.154161, 0.949998 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 1
+alignment = 3
+letter_color = 76
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ 5.500000, 370.500000 ]
+text = "~w~Discord de Mong Servers: ~y~rakmong.com/mong-servers~n~~w~Discord de RakMong: ~y~rakmong.com/discord~n~~w~Foro de RakMong: ~y~forum.rakmong.com"
+style = 2
+letter_size = [ 0.149990, 0.949996 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 1
+alignment = 1
+letter_color = -1094795668
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+position = [ -2.000000, 208.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 35.500000, 44.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 76
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 1614
+rotation = [ -10.000000, 0.000000, -88.000000 ]
+zoom = 1.000000
+model_colors = [ 1, 1 ]
+
+[[textdraws]]
+player = true
+position = [ 138.500000, 296.500000 ]
+text = "_"
+style = 2
+letter_size = [ 0.149990, 0.949994 ]
+line_size = [ 400.000000, 272.500000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = -1094795668
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+[[textdraws]]
+player = true
+position = [ 25.000000, 112.000000 ]
+text = "Motumbo_Abimbola"
+style = 1
+letter_size = [ 0.212500, 1.050001 ]
+line_size = [ 266.000000, 11.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 135
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 1
+
+[[textdraws]]
+player = true
+position = [ 25.000000, 162.000000 ]
+text = "Tu contraseña"
+style = 1
+letter_size = [ 0.212500, 1.050001 ]
+line_size = [ 265.500000, 11.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 135
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 1
+
+[[textdraws]]
+player = true
+position = [ 269.500000, 178.000000 ]
+text = "Mostrar contraseña"
+style = 3
+letter_size = [ 0.208333, 0.950002 ]
+line_size = [ 349.000000, 9.500000 ]
+outline = 2
+shadow = 0
+alignment = 3
+letter_color = -1094795521
+bg_color = 336860160
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 1
+
+[[textdraws]]
+player = true
+position = [ 26.000000, 215.000000 ]
+text = "(OPCIONAL)"
+style = 1
+letter_size = [ 0.212500, 1.050001 ]
+line_size = [ 163.000000, 11.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 135
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 1
+
+[[textdraws]]
+player = true
+position = [ 25.000000, 265.000000 ]
+text = "(OPCIONAL)"
+style = 1
+letter_size = [ 0.212500, 1.050001 ]
+line_size = [ 265.500000, 11.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 135
+bg_color = 336860200
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 1
+

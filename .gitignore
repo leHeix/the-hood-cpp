@@ -1,4 +1,7 @@
 /.vs
-/server
 /out
-!/server/scriptfiles/textdraws/*
+!/server/
+/server/*
+!/server/scriptfiles/
+/server/scriptfiles/*
+!/server/scriptfiles/textdraws

@@ -1,0 +1,369 @@
+#
+# TextDraw count: 21
+#
+
+## TextDraw 0
+[[textdraws]]
+position = [ 244.000000, 274.000000 ]
+text = "HUD:skipicon"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ -41.500000, 42.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 135
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 1
+[[textdraws]]
+position = [ 377.000000, 273.000000 ]
+text = "HUD:skipicon"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 42.500000, 42.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 135
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 2
+[[textdraws]]
+position = [ 310.000000, 315.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 11.200003 ]
+line_size = [ 298.500000, 154.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 90
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 3
+[[textdraws]]
+position = [ 259.000000, 333.500000 ]
+text = "_"
+style = 1
+letter_size = [ 0.204163, 8.600003 ]
+line_size = [ 298.500000, 47.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 255
+box_color = -1094795686
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 4
+[[textdraws]]
+position = [ 215.500000, 332.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 85.500000, 85.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 28
+rotation = [ -10.000000, 0.000000, 18.000000 ]
+zoom = 0.949998
+model_colors = [ 1, 1 ]
+
+## TextDraw 5
+[[textdraws]]
+position = [ 361.000000, 333.500000 ]
+text = "_"
+style = 1
+letter_size = [ 0.204163, 8.600003 ]
+line_size = [ 298.500000, 47.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 255
+box_color = -1094795686
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 6
+[[textdraws]]
+position = [ 233.500000, 396.500000 ]
+text = "ld_bum:blkdot"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 51.000000, 19.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1094795521
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 7
+[[textdraws]]
+position = [ 309.500000, 399.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.174998, 1.550004 ]
+line_size = [ 298.500000, 37.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 255
+box_color = -1094795686
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 8
+[[textdraws]]
+position = [ 309.500000, 386.000000 ]
+text = "Edad"
+style = 2
+letter_size = [ 0.179166, 1.000000 ]
+line_size = [ 400.000000, 36.500000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = -1094795521
+bg_color = 125
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 9
+[[textdraws]]
+position = [ 316.500000, 332.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 85.500000, 85.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 65
+rotation = [ -10.000000, 0.000000, -14.000000 ]
+zoom = 0.949998
+model_colors = [ 1, 1 ]
+
+## TextDraw 10
+[[textdraws]]
+position = [ 335.500000, 396.500000 ]
+text = "ld_bum:blkdot"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 51.000000, 19.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1094795521
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 11
+[[textdraws]]
+position = [ 259.000000, 401.000000 ]
+text = "HOMBRE"
+style = 3
+letter_size = [ 0.258332, 1.100000 ]
+line_size = [ 11.000000, 45.000000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = 205
+bg_color = 0
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 12
+[[textdraws]]
+position = [ 361.000000, 401.000000 ]
+text = "MUJER"
+style = 3
+letter_size = [ 0.258332, 1.100000 ]
+line_size = [ 11.000000, 45.000000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = 205
+bg_color = 0
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 13
+[[textdraws]]
+position = [ 310.000000, 316.000000 ]
+text = "CONFIGURA TU PERSONAJE"
+style = 3
+letter_size = [ 0.254166, 1.149999 ]
+line_size = [ 400.000000, 147.000000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = -1094795521
+bg_color = 97
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 14
+[[textdraws]]
+position = [ 372.000000, 312.000000 ]
+text = "ld_beat:chit"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 16.500000, 19.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1094795521
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 15
+[[textdraws]]
+position = [ 377.799987, 313.500000 ]
+text = "!"
+style = 2
+letter_size = [ 0.491665, 1.600000 ]
+line_size = [ 400.000000, 17.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 195
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 16
+[[textdraws]]
+position = [ 634.000000, 432.000000 ]
+text = "~w~presiona ~y~ESCAPE ~w~para terminar"
+style = 3
+letter_size = [ 0.254166, 1.099999 ]
+line_size = [ 400.000000, 147.000000 ]
+outline = 0
+shadow = 1
+alignment = 3
+letter_color = -1094795521
+bg_color = 97
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 17
+[[textdraws]]
+position = [ 375.000000, 315.000000 ]
+text = "~y~_________tu_skin_cambiara_dependiendo~n~_________de_la_edad_de_tu_personaje."
+style = 2
+letter_size = [ 0.150000, 0.899999 ]
+line_size = [ 386.500000, 11.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -256
+bg_color = 255
+box_color = -16777166
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 18
+[[textdraws]]
+position = [ 224.000000, 275.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 3.850000 ]
+line_size = [ 400.000000, 42.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 19
+[[textdraws]]
+position = [ 398.000000, 274.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 3.850000 ]
+line_size = [ 400.000000, 42.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 20
+[[textdraws]]
+player = true
+position = [ 309.000000, 400.000000 ]
+text = "18"
+style = 2
+letter_size = [ 0.179166, 1.100000 ]
+line_size = [ 11.000000, 36.500000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = -1094795521
+bg_color = 125
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1

@@ -1,0 +1,94 @@
+#
+# TextDraw count: 5
+#
+
+## TextDraw 0
+[[textdraws]]
+player = true
+position = [ 108.000000, 290.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 3.799999 ]
+line_size = [ 298.500000, 190.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 336860415
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 1
+[[textdraws]]
+player = true
+position = [ 17.000000, 293.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 3.150002 ]
+line_size = [ 294.500000, -0.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 1433087999
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 2
+[[textdraws]]
+player = true
+position = [ 20.500000, 293.000000 ]
+text = "ld_beat:chit"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 23.500000, 28.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 1433087999
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 3
+[[textdraws]]
+player = true
+position = [ 29.600000, 299.000000 ]
+text = "?"
+style = 3
+letter_size = [ 0.291666, 1.649999 ]
+line_size = [ 400.000000, 17.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -741092353
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 4
+[[textdraws]]
+player = true
+position = [ 50.000000, 293.000000 ]
+text = "has mamado el guebo?"
+style = 1
+letter_size = [ 0.208333, 1.000000 ]
+line_size = [ 200.500000, 17.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -741092353
+bg_color = 336860220
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+

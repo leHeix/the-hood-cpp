@@ -1,0 +1,309 @@
+#
+# TextDraw count: 17
+#
+
+## TextDraw 0
+[[textdraws]]
+position = [ 597.000000, 406.000000 ]
+text = "ld_beat:chit"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 42.500000, 42.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1401668353
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 1
+[[textdraws]]
+position = [ 571.000000, 385.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ -115.500000, 94.500000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -1401668353
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 19177
+rotation = [ 22.000000, -24.000000, 4.000000 ]
+zoom = 1.000000
+model_colors = [ 1, 1 ]
+
+## TextDraw 2
+[[textdraws]]
+position = [ 566.000000, 431.500000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 0.600004 ]
+line_size = [ 343.500000, 105.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -1401668353
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 3
+[[textdraws]]
+position = [ 568.000000, 433.000000 ]
+text = "_"
+style = 0
+letter_size = [ 0.600000, 0.250003 ]
+line_size = [ 298.500000, 109.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 168430335
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 4
+[[textdraws]]
+position = [ 620.000000, 433.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 0.250003 ]
+line_size = [ 608.000000, -84.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 1301393663
+bg_color = 255
+box_color = -929997825
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 5
+[[textdraws]]
+position = [ 473.000000, 406.000000 ]
+text = "ld_beat:chit"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 42.500000, 42.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 930386175
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 6
+[[textdraws]]
+position = [ 599.000000, 408.000000 ]
+text = "ld_beat:chit"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 39.000000, 39.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 168430335
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 7
+[[textdraws]]
+position = [ 546.000000, 419.500000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 0.600004 ]
+line_size = [ 343.500000, 101.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 930386175
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 8
+[[textdraws]]
+position = [ 547.000000, 374.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 99.500000, 92.500000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 930386175
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 19177
+rotation = [ 22.000000, -24.000000, 4.000000 ]
+zoom = 1.000000
+model_colors = [ 1, 1 ]
+
+## TextDraw 9
+[[textdraws]]
+position = [ 544.000000, 421.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 0.250003 ]
+line_size = [ 298.500000, 105.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 168430335
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 10
+[[textdraws]]
+position = [ 506.000000, 421.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.916665, 0.250001 ]
+line_size = [ 503.500000, 0.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 1301393663
+bg_color = 255
+box_color = 1385939711
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 11
+[[textdraws]]
+position = [ 601.000000, 399.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 34.500000, 55.500000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -45
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 19094
+rotation = [ -6.000000, -90.000000, 18.000000 ]
+zoom = 1.000000
+model_colors = [ 1, 1 ]
+
+## TextDraw 12
+[[textdraws]]
+position = [ 475.000000, 408.000000 ]
+text = "ld_beat:chit"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 39.000000, 39.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 168430335
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 13
+[[textdraws]]
+position = [ 481.000000, 412.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 26.500000, 31.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -741092397
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 19570
+rotation = [ 3.000000, 1.000000, -55.000000 ]
+zoom = 1.000000
+model_colors = [ 1, 1 ]
+
+## TextDraw 14
+[[textdraws]]
+position = [ 500.000000, 427.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.591665, 0.700002 ]
+line_size = [ 489.000000, 3.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = 255
+box_color = 1097458175
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 15
+[[textdraws]]
+position = [ 508.000000, 417.000000 ]
+text = "\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\"
+style = 1
+letter_size = [ 0.241666, 0.899999 ]
+line_size = [ 400.000000, 17.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 930386068
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 16
+[[textdraws]]
+position = [ 513.000000, 429.000000 ]
+text = "/_/_/_/_/_/_/_/_/_/_/_/_/"
+style = 1
+letter_size = [ 0.241666, 0.899999 ]
+line_size = [ 400.000000, 17.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -1401668460
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
