@@ -7,3 +7,6 @@
 [submodule "lib/robin-hood-hashing"]
 	path = lib/robin-hood-hashing
 	url = https://github.com/martinus/robin-hood-hashing
+[submodule "lib/ringbuffer"]
+	path = lib/ringbuffer
+	url = https://github.com/jnk0le/Ring-Buffer

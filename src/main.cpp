@@ -3,10 +3,11 @@
 extern void* pAMXFunctions;
 void** server::plugin_data;
 std::unique_ptr<sqlite::Database> server::database;
+static std::chrono::steady_clock::time_point load_timestamp;
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void** ppData)
 {
-	std::srand(std::time(0));
+	load_timestamp = std::chrono::steady_clock::now();
 
 	server::plugin_data = ppData;
 	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
@@ -49,18 +50,28 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 {
-	sampgdk::logprintf("   /////////////////////////////////////////");
-	sampgdk::logprintf("   ///                                   ///");
-	sampgdk::logprintf("   ///               The Hood            ///");
-	sampgdk::logprintf("   ///                                   ///");
-	sampgdk::logprintf("   /////////////////////////////////////////");
+	sampgdk::logprintf("\n\n\n");
 	
+	sampgdk::logprintf("   /////////////////////////////////////////");
+	sampgdk::logprintf("   ///                                   ///");
+	sampgdk::logprintf(fmt::format(FMT_COMPILE("   ///{: ^35}///"), "The Hood").c_str());
+	sampgdk::logprintf("   ///                                   ///");
+	sampgdk::logprintf("   /////////////////////////////////////////");
+	sampgdk::logprintf("   ~ Applying patches...");
+
+	{
+		unsigned char* const wrong_pid_branch = reinterpret_cast<unsigned char*>(_WIN32 ? 0x004591FC : 0x080752FC);
+		constexpr auto size_wrong_pid_branch = (_WIN32 ? 82 : 114);
+		utils::unlocked_scope lk(wrong_pid_branch, size_wrong_pid_branch);
+		std::memset(wrong_pid_branch, 0x90, size_wrong_pid_branch);
+	}
+
 	try
 	{
 		server::database = std::make_unique<sqlite::Database>("scriptfiles/the_hood.db");
-		sampgdk::logprintf("~ Database file opened.");
+		sampgdk::logprintf("   ~ Database file opened.");
 
-		sampgdk::logprintf("~ Enabling database optimizations...");
+		sampgdk::logprintf("   ~ Enabling database optimizations...");
 		server::database->Exec(
 			"PRAGMA TEMP_STORE = FILE; "
 			"PRAGMA JOURNAL_MODE = TRUNCATE; "
@@ -68,12 +79,12 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 			"PRAGMA LOCKING_MODE = NORMAL;"
 		);
 
-		sampgdk::logprintf("~ Setting up database...");
+		sampgdk::logprintf("   ~ Setting up database...");
 		std::ifstream struct_file{ "./scriptfiles/struct.sql" };
 		if (!struct_file.good())
 		{
-			sampgdk::logprintf("[!] Failed to initialize database:");
-			sampgdk::logprintf("[!]   Couldn't find database structure file.");
+			sampgdk::logprintf("   [!] Failed to initialize database:");
+			sampgdk::logprintf("   [!]   Couldn't find database structure file.");
 			std::exit(1);
 		}
 
@@ -85,12 +96,12 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 	}
 	catch (const std::exception& e)
 	{
-		sampgdk::logprintf("[!] Failed to open or initialize database:");
-		sampgdk::logprintf("[!]   %s", e.what());
+		sampgdk::logprintf("   [!] Failed to open or initialize database:");
+		sampgdk::logprintf("   [!]   %s", e.what());
 		std::exit(1);
 	}
 
-	sampgdk::logprintf("~ Database setup done.");
+	sampgdk::logprintf("   ~ Database setup done.");
 
 	net::RakServer = std::make_unique<net::CRakServer>(server::plugin_data);
 	server::console = std::make_unique<CConsole>();
@@ -116,6 +127,15 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 	DisableInteriorEnterExits();
 	EnableStuntBonusForAll(false);
 	ManualVehicleEngineAndLights();
+	ShowPlayerMarkers(PLAYER_MARKERS_MODE_GLOBAL);
+	SetNameTagDrawDistance(25.f);
+
+	sampgdk::logprintf("\n\n\n");
+
+	enter_exits->Create(19902, "{ED2B2B}Ugi's Pizza\n{DADADA}Presiona {ED2B2B}H {DADADA}para entrar", "{DADADA}Presiona {ED2B2B}H {DADADA}para salir", { 2105.0681, -1806.4565, 13.5547, 91.9755 }, 0, 0, { 372.4150, -133.3214, 1001.4922, 355.1316 }, 1, 5, nullptr);
+
+	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - load_timestamp);
+	sampgdk::logprintf("Took %i milliseconds to load the gamemode.", ms.count());
 
 	return true;
 }

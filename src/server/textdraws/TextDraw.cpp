@@ -113,12 +113,10 @@ int server::textdraw::GetTextDrawLineCount(const std::string& string)
 bool server::textdraw::SplitTextDrawString(std::string& string, float max_width, float letter_size, std::uint8_t font, std::uint8_t outline, bool proportional)
 {
 	std::uint16_t previous_space = 0u;
-	size_t i = 0u;
+	size_t i = -1;
 
-	while ((i = string.find(' ', i)) != std::string::npos)
+	while ((i = string.find(' ', ++i)) != std::string::npos)
 	{
-		++i;
-
 		if (letter_size * (float)GetTextDrawLineWidth(string, font, outline, proportional, previous_space, i) <= max_width)
 			continue;
 
@@ -126,7 +124,7 @@ bool server::textdraw::SplitTextDrawString(std::string& string, float max_width,
 		string.insert(i, "~n~");
 
 		previous_space = i + 3;
-		i++;
+		i += 2;
 	}
 
 	/*
@@ -152,6 +150,8 @@ bool server::textdraw::SplitTextDrawString(std::string& string, float max_width,
 
 cell server::textdraw::OnPlayerClickTextDraw(std::uint16_t playerid, std::uint16_t clickedid)
 {
+	sampgdk::logprintf("OnPlayerClickTextDraw(%i, %i)", playerid, clickedid);
+
 	auto* player = server::player_pool[playerid];
 	
 	if (player->TextDraws()._slots.test(clickedid))
@@ -162,7 +162,10 @@ cell server::textdraw::OnPlayerClickTextDraw(std::uint16_t playerid, std::uint16
 
 		if (it != player->TextDraws()._ids.end())
 		{
-			it->first->_data.callback(player);
+			if (it->first->_data.callback)
+			{
+				it->first->_data.callback(player);
+			}
 		}
 	}
 

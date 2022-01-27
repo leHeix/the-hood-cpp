@@ -69,8 +69,10 @@
 #include <sqlite3.h>
 #include <fmt/core.h>
 #include <fmt/chrono.h>
+#include <fmt/compile.h>
 #include <glm/glm.hpp>
 #include <glm/common.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <urmem/urmem.hpp>
 #if defined __clang__
 	#pragma clang diagnostic push
@@ -89,6 +91,7 @@
 #include <botan/hex.h>
 #include <botan/argon2fmt.h>
 #include <botan/system_rng.h>
+#include <ringbuffer/ringbuffer.hpp>
 
 #undef MAX_PLAYERS
 #define MAX_PLAYERS 150
@@ -108,13 +111,17 @@ class CPlayer;
 #include "hooks/CConsole.hpp"
 #include "hooks/Publics.hpp"
 
+#include "server/streamer/Natives.hpp"
 #include "server/Database.hpp"
-#include "server/Commands.hpp"
+#include "server/commands/ArgumentStore.hpp"
+#include "server/commands/Commands.hpp"
 #include "server/timers/Timer.hpp"
 #include "server/textdraws/TextDrawManager.hpp"
 #include "server/textdraws/TextDraw.hpp"
+#include "server/EnterExitManager.hpp"
 
 #include "player/CFadeScreen.hpp"
+#include "player/CChat.hpp"
 #include "player/Notifications.hpp"
 #include "player/Needs.hpp"
 #include "player/auth/Auth.hpp"

@@ -40,11 +40,13 @@ private:
 	unsigned short _playerid{ 0U };
 	unsigned int _account_id{ 0U };
 	int _money{ 0 };
+	std::uint16_t _paused_time{ 0u };
 
 	// Managers
 	std::unique_ptr<CFadeScreen> _fadescreen;
 	std::unique_ptr<player::CNotificationManager> _notifications;
 	std::unique_ptr<player::CNeedsManager> _needs;
+	std::unique_ptr<CChat> _chat;
 	server::TextDrawIndexManager _td_indexer{};
 	
 	std::string _ip_address;
@@ -74,6 +76,9 @@ private:
 	std::unordered_map<std::string, std::any> _player_data{};
 	std::optional<std::chrono::steady_clock::time_point> _cancel_td_tick{ std::nullopt };
 
+	// Commands
+	std::chrono::steady_clock::time_point _last_command{};
+
 	friend cell PlayerDialog_OnDialogResponse(std::uint16_t playerid, short dialogid, bool response, int listitem, std::string inputtext);
 	friend bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* params, cell* retval);
 	friend cell auth::OnPlayerConnect(std::uint16_t playerid);
@@ -89,22 +94,27 @@ public:
 	void RegisterConnection();
 
 	// Player Functions
-	void ClearChat(unsigned char lines = 20);
 	void ToggleWidescreen();
 	void ToggleWidescreen(bool set);
 	inline bool WidescreenEnabled() const noexcept { return _widescreen; }
 	void CancelTextDrawSelection();
+	bool Spawned() const;
+	void SetPosition(const glm::vec3& pos);
+	void SetPosition(const glm::vec4& pos);
+	void SetFacingAngle(float angle);
 
 	// Dialogs
 	void ShowDialog(unsigned char style, const std::string_view caption, const std::string_view info, const std::string_view button1, const std::string_view button2, std::optional<dialog_callback_t> callback = std::nullopt);
 	inline bool DialogVisible() const { return _dialog_shown; }
 
-	inline auto* FadeScreen() noexcept { return _fadescreen.get(); }
-	inline const auto* FadeScreen() const noexcept { return _fadescreen.get(); }
-	inline auto* Notifications() noexcept { return _notifications.get(); }
-	inline const auto* Notifications() const noexcept { return _notifications.get(); }
-	inline auto* Needs() noexcept { return _needs.get(); }
-	inline const auto* Needs() const noexcept { return _needs.get(); }
+	[[nodiscard]] inline auto* FadeScreen() noexcept { return _fadescreen.get(); }
+	[[nodiscard]] inline const auto* FadeScreen() const noexcept { return _fadescreen.get(); }
+	[[nodiscard]] inline auto* Notifications() noexcept { return _notifications.get(); }
+	[[nodiscard]] inline const auto* Notifications() const noexcept { return _notifications.get(); }
+	[[nodiscard]] inline auto* Needs() noexcept { return _needs.get(); }
+	[[nodiscard]] inline const auto* Needs() const noexcept { return _needs.get(); }
+	[[nodiscard]] inline auto* Chat() noexcept { return _chat.get(); }
+	[[nodiscard]] inline const auto* Chat() const noexcept { return _chat.get(); }
 
 	IO_GETTER_SETTER(TextDraws, _td_indexer)
 	IO_GETTER_SETTER(AccountId, _account_id)
@@ -124,6 +134,8 @@ public:
 	IO_GETTER_SETTER(Rank, _rank_level)
 	IO_GETTER_SETTER(PlayedTime, _played_time)
 	IO_GETTER_SETTER(PhoneNumber, _phone_number)
+	IO_GETTER_SETTER(PausedTime, _paused_time)
+	IO_GETTER_SETTER(LastCommandTick, _last_command)
 
 	// Custom data manipulation
 	template<class T>
@@ -145,5 +157,10 @@ public:
 		{
 			return std::nullopt;
 		}
+	}
+
+	operator int()
+	{
+		return _playerid;
 	}
 };

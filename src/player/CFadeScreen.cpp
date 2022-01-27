@@ -55,8 +55,6 @@ void CFadeScreen::Fade(unsigned char callback_alpha, std::function<void()> callb
 
 void CFadeScreen::Stop()
 {
-	std::scoped_lock lk(_mtx);
-
 	if (_timer)
 	{
 		_timer->Killed() = true;

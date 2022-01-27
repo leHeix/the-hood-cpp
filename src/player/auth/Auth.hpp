@@ -21,7 +21,7 @@ namespace auth
 		218, 10, 39, 129, 131       // Mujeres
 	};
 
-	std::array<unsigned char, MAX_PLAYERS> selected_skins;
+	extern std::array<unsigned char, MAX_PLAYERS> selected_skins;
 
 	cell OnGameModeInit();
 	cell OnPlayerConnect(std::uint16_t playerid);

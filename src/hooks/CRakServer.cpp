@@ -54,12 +54,38 @@ namespace net
 		std::unique_ptr<BitStream> bs = std::make_unique<BitStream>(&packet->data[0], (packet->length - 1), false);
 		bs->Read<uint16_t>(packetid);
 
-		switch (packetid)
+		if (server::player_pool.Exists(packet->playerIndex))
 		{
-			case net::raknet::ID_PLAYER_SYNC:
+			auto* player = server::player_pool[packet->playerIndex];
+
+			switch (packetid)
 			{
-				if (packet->length != sizeof(stOnFootSyncData) + 1)
-					return 0xFF;
+				case net::raknet::ID_PLAYER_SYNC:
+				{
+					if (packet->length != sizeof(stOnFootSyncData) + 1)
+						return 0xFF;
+
+					stOnFootSyncData* data = (stOnFootSyncData*)&packet->data[1];
+					player->Position().x = data->vecPos.X;
+					player->Position().y = data->vecPos.Y;
+					player->Position().z = data->vecPos.Z;
+					GetPlayerFacingAngle(packet->playerIndex, &player->Position().w);
+
+					/*
+					glm::quat q;
+					q.w = data->fQuaternion[0];
+					q.x = data->fQuaternion[1];
+					q.y = data->fQuaternion[2];
+					q.z = data->fQuaternion[3];
+					glm::vec3 e = glm::eulerAngles(q);
+					sampgdk::logprintf("roll: %f - pitch: %f - yaw: %f", glm::roll(q), glm::pitch(q), glm::yaw(q));
+					sampgdk::logprintf("vector: %f - %f - %f", e.x, e.y, e.z);
+					e = glm::degrees(e);
+					sampgdk::logprintf("vector deg: %f - %f - %f", e.x, e.y, e.z);
+					sampgdk::logprintf("angle gpfa: %f", player->Position().w);
+					*/
+					break;
+				}
 			}
 		}
 

@@ -2,6 +2,8 @@
 
 namespace auth
 {
+	std::array<unsigned char, MAX_PLAYERS> selected_skins;
+
 	static constexpr unsigned short AdjustSkinToRange(unsigned char age, unsigned char skin)
 	{
 		if (35 <= age && age <= 60)
@@ -47,9 +49,9 @@ namespace auth
 							{
 								auto stmt = server::database->PrepareLock(
 									"INSERT INTO `PLAYERS` "
-										"(NAME, PASSWORD, SEX, AGE, POS_X, POS_Y, POS_Z, ANGLE, VW, INTERIOR, SKIN, CURRENT_CONNECTION, MONEY) "
+									"(NAME, PASSWORD, SEX, AGE, POS_X, POS_Y, POS_Z, ANGLE, VW, INTERIOR, SKIN, CURRENT_CONNECTION, MONEY) "
 									"VALUES "
-										"(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'), ?); "
+									"(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'), ?); "
 								);
 
 								stmt->Bind<1>(player->Name());
@@ -71,7 +73,7 @@ namespace auth
 							} // Database should be unlocked after the statement gets destroyed
 
 							player->RegisterConnection();
-							
+
 						}
 						catch (const std::runtime_error& e)
 						{
@@ -83,8 +85,7 @@ namespace auth
 					player->Flags().set(player::flags::registered, true);
 					player->Flags().set(player::flags::authenticating, false);
 
-					SetPlayerPos(playerid, 2109.1204, -1790.6901, 13.5547);
-					SetPlayerFacingAngle(playerid, 350.1182);
+					player->SetPosition({ 2109.1204, -1790.6901, 13.5547, 350.1182 });
 					SetPlayerInterior(playerid, 0);
 					SetPlayerCameraPos(playerid, 2096.242675, -1779.497558, 15.979070);
 					SetPlayerCameraLookAt(playerid, 2103.439697, -1783.191162, 14.913400, CAMERA_CUT);
@@ -103,7 +104,7 @@ namespace auth
 							PlayerPlaySound(playerid, 5205, 0.0, 0.0, 0.0);
 							ClearAnimations(playerid, false);
 							server::player_pool[playerid]->ToggleWidescreen(false);
-							server::player_pool[playerid]->ClearChat();
+							server::player_pool[playerid]->Chat()->Clear();
 							SetCameraBehindPlayer(playerid);
 							TogglePlayerControllable(playerid, true);
 							SetPlayerVirtualWorld(playerid, 0);
@@ -199,7 +200,7 @@ namespace auth
 						SetSpawnInfo(playerid, NO_TEAM, player->Skin(), x, y, z, angle, 0, 0, 0, 0, 0, 0);
 						TogglePlayerSpectating(playerid, false);
 						player->ToggleWidescreen(false);
-						player->ClearChat();
+						player->Chat()->Clear();
 
 						SetPlayerVirtualWorld(playerid, player->VirtualWorld());
 						SetPlayerInterior(playerid, player->Interior());
@@ -210,6 +211,7 @@ namespace auth
 						player->RegisterConnection();
 
 						player->Notifications()->Show(fmt::format("Bienvenido a The Hood, {}. Tu última conexión fue el ~y~{}~w~.", player->Name(), player->LastConnection()), 5000);
+						
 						player->Needs()->StartUpdating();
 						player->Needs()->ShowBars();
 
@@ -237,7 +239,7 @@ namespace auth
 					SetSpawnInfo(playerid, NO_TEAM, player->Skin(), 448.8462f, 508.5697f, 1001.4195f, 284.2451f, 0, 0, 0, 0, 0, 0);
 					TogglePlayerSpectating(playerid, false);
 					player->ToggleWidescreen(false);
-					player->ClearChat();
+					player->Chat()->Clear();
 
 					SetPlayerInterior(playerid, 12);
 					SetPlayerVirtualWorld(playerid, 1 + playerid);
@@ -344,9 +346,11 @@ namespace auth
 
 	cell OnPlayerConnect(std::uint16_t playerid)
 	{
+		SetPlayerColor(playerid, 0xFFFFFF00);
+
 		TogglePlayerSpectating(playerid, true);
 		server::player_pool[playerid]->ToggleWidescreen(true);
-		server::player_pool[playerid]->ClearChat();
+		server::player_pool[playerid]->Chat()->Clear();
 		server::player_pool[playerid]->Flags().set(player::flags::authenticating, true);
 
 		const auto screen_blacked = [=]() {

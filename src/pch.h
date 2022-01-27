@@ -26,6 +26,8 @@
 #include <cstdint>
 #include <queue>
 #include <bit>
+#include <numbers>
+#include <syncstream>
 
 #else
 

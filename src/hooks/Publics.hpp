@@ -34,7 +34,7 @@ namespace callbacks
 
 		template<class T>
 		operator T() {
-			static_assert(std::is_convertible_v<cell, T>);
+			static_assert(std::is_convertible_v<T, cell>);
 			return static_cast<T>(value);
 		}
 
@@ -87,3 +87,5 @@ public:
 		callbacks::_hooks->insert({ function_name, callbacks::public_hook(fun) });
 	}
 };
+
+// to-do: post-hooks
