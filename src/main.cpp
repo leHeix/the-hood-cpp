@@ -132,8 +132,6 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 
 	sampgdk::logprintf("\n\n\n");
 
-	enter_exits->Create(19902, "{ED2B2B}Ugi's Pizza\n{DADADA}Presiona {ED2B2B}H {DADADA}para entrar", "{DADADA}Presiona {ED2B2B}H {DADADA}para salir", { 2105.0681, -1806.4565, 13.5547, 91.9755 }, 0, 0, { 372.4150, -133.3214, 1001.4922, 355.1316 }, 1, 5, nullptr);
-
 	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - load_timestamp);
 	sampgdk::logprintf("Took %i milliseconds to load the gamemode.", ms.count());
 

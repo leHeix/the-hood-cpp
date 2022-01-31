@@ -91,6 +91,21 @@ void CPlayer::SetFacingAngle(float angle)
 	SetPlayerFacingAngle(_playerid, angle);
 }
 
+void CPlayer::StopShopping()
+{
+	_flags.set(player::flags::using_shop, false);
+	_flags.set(player::flags::can_use_shop_buttons, false);
+	
+	SetCameraBehindPlayer(_playerid);
+	TogglePlayerControllable(_playerid, true);
+	textdraw_manager["shop"]->Hide(this);
+	CancelTextDrawSelection();
+	DestroyPlayerObject(_playerid, shop_manager->PlayerData(_playerid).object);
+
+	shop_manager->PlayerData(_playerid) = {};
+	_shop = nullptr;
+}
+
 void CPlayer::ResetMoney()
 {
 	_money = 0;
@@ -112,7 +127,7 @@ void CPlayer::GiveMoney(int money, bool give, bool update)
 		uv_queue_work(uv_default_loop(), work, [](uv_work_t* handle) {
 			CPlayer* player = static_cast<CPlayer*>(handle->data);
 
-			auto stmt = server::database->Prepare("UPDATE `PLAYERS` SET `MONEY` = ? WHERE `ID` = ? LIMIT 1;");
+			auto stmt = server::database->Prepare("UPDATE `PLAYERS` SET `MONEY` = ? WHERE `ID` = ?;");
 			stmt->Bind<1>(player->GetMoney());
 			stmt->Bind<2>(player->AccountId());
 			stmt->Step();
@@ -138,7 +153,7 @@ void CPlayer::SetMoney(int money, bool give, bool update)
 		uv_queue_work(uv_default_loop(), work, [](uv_work_t* handle) {
 			CPlayer* player = static_cast<CPlayer*>(handle->data);
 
-			auto stmt = server::database->Prepare("UPDATE `PLAYERS` SET `MONEY` = ? WHERE `ID` = ? LIMIT 1;");
+			auto stmt = server::database->Prepare("UPDATE `PLAYERS` SET `MONEY` = ? WHERE `ID` = ?;");
 			stmt->Bind<1>(player->GetMoney());
 			stmt->Bind<2>(player->AccountId());
 			stmt->Step();

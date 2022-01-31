@@ -39,33 +39,40 @@ namespace utils
 #endif
 		}
 	};
-}
 
-namespace server 
-{
-	/*
 	namespace
 	{
-		template<class A>
-		struct ctype { using type = A; };
-		struct ctype<std::string> { using type = const char*; };
-		struct ctype<std::string_view> { using type = const char*; };
-
-		template<class T>
-		static auto convert_to_ctype(const T& value) -> ctype<std::remove_cvref_t<T>>::type
-		{
-			using PlainT = std::remove_cvref_t<T>;
-			if constexpr (std::is_same_v<PlainT, std::string>)
-			{
-				return value.c_str();
-			}
-			else if constexpr (std::is_same_v<PlainT, std::string_view>)
-			{
-				return value.data();
-			}
-
-			return value;
-		}
+		constexpr uint32_t FNV_PRIME = 16777619U;
+		constexpr uint32_t FNV_OFFSET_BASIS = 2166136261U;
 	}
-	*/
+
+	constexpr std::uint32_t hash(const std::string_view str)
+	{
+		std::uint32_t h = FNV_OFFSET_BASIS;
+		for (auto&& c : str)
+		{
+			h ^= c;
+			h *= FNV_PRIME;
+		}
+		return h;
+	}
+
+	constexpr std::uint32_t hash(const char* str)
+	{
+		size_t len = std::char_traits<char>::length(str);
+
+		std::size_t h = FNV_OFFSET_BASIS;
+		for(size_t i = 0; i < len; ++i)
+		{
+			h ^= *str++;
+			h *= FNV_PRIME;
+		}
+
+		return h;
+	}
+}
+
+constexpr std::uint32_t operator""_hash(const char* s, size_t c)
+{
+	return utils::hash(s);
 }

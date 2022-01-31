@@ -71,6 +71,22 @@ namespace callbacks
 	extern std::unique_ptr<std::unordered_multimap<std::string, public_hook>> _hooks;
 }
 
+class public_hook {
+public:
+	template<class... Args>
+	public_hook(const char* function_name, cell(*function)(Args...))
+	{
+		if (!callbacks::_hooks)
+		{
+			std::cout << "[Public Hook] Created public hook store" << std::endl;
+			callbacks::_hooks = std::make_unique<std::unordered_multimap<std::string, callbacks::public_hook>>();
+		}
+
+		std::cout << "[Public Hook] Registering hook to function " << function_name << " with address " << reinterpret_cast<void*>(function) << std::endl;
+		callbacks::_hooks->insert({ function_name, callbacks::public_hook(function) });
+	}
+};
+
 template<auto fun>
 class CPublicHook
 {

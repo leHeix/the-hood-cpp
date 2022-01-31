@@ -119,6 +119,7 @@ class CPlayer;
 #include "server/textdraws/TextDrawManager.hpp"
 #include "server/textdraws/TextDraw.hpp"
 #include "server/EnterExitManager.hpp"
+#include "server/shops/ShopManager.hpp"
 
 #include "player/CFadeScreen.hpp"
 #include "player/CChat.hpp"

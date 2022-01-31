@@ -1,5 +1,10 @@
 #pragma once
 
+namespace shops
+{
+	class CShop;
+}
+
 namespace player
 {
 	// libtards get rekt !
@@ -68,6 +73,7 @@ private:
 	int _phone_number{ 0 };
 	int _played_time{ 0 };
 	bool _widescreen{ false };
+	shops::CShop* _shop{ nullptr };
 
 	// Dialogs
 	std::optional<dialog_callback_t> _dialog_callback{ std::nullopt };
@@ -102,6 +108,7 @@ public:
 	void SetPosition(const glm::vec3& pos);
 	void SetPosition(const glm::vec4& pos);
 	void SetFacingAngle(float angle);
+	void StopShopping();
 
 	// Dialogs
 	void ShowDialog(unsigned char style, const std::string_view caption, const std::string_view info, const std::string_view button1, const std::string_view button2, std::optional<dialog_callback_t> callback = std::nullopt);
@@ -115,6 +122,7 @@ public:
 	[[nodiscard]] inline const auto* Needs() const noexcept { return _needs.get(); }
 	[[nodiscard]] inline auto* Chat() noexcept { return _chat.get(); }
 	[[nodiscard]] inline const auto* Chat() const noexcept { return _chat.get(); }
+	IO_GETTER_SETTER(CurrentShop, _shop)
 
 	IO_GETTER_SETTER(TextDraws, _td_indexer)
 	IO_GETTER_SETTER(AccountId, _account_id)

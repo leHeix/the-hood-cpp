@@ -1,4 +1,5 @@
 #include "../main.hpp"
+#include "Needs.hpp"
 
 void player::CNeedsManager::UpdateThirst(timers::CTimer* timer, CPlayer* player)
 {
@@ -75,6 +76,33 @@ void player::CNeedsManager::ShowBars()
 		textdraws->GetGlobalTextDraws()[i]->Show(_player);
 }
 
+void player::CNeedsManager::Puke()
+{
+	_player->StopShopping();
+	_eat_count = 0u;
+	_last_puke_tick = std::chrono::steady_clock::now();
+
+	_player->Flags().set(player::flags::is_puking, true);
+
+	// Start player puke anim
+	_player->SetFacingAngle(0.f);
+	auto& pos = _player->Position();
+	ApplyAnimation(*_player, "FOOD", "EAT_VOMIT_P", 4.0, false, false, false, true, 0, false);
+	PlayerPlaySound(*_player, 1169, 0.0, 0.0, 0.0);
+
+	timers::timer_manager->Once(_player, 4000, [](timers::CTimer*, CPlayer* player) {
+		auto& pos = player->Position();
+		auto object = CreateObject(18722, pos.x + 0.355, pos.y - 0.116, pos.z - 1.6, 0.0, 0.0, 0.0, 0.0);
+
+		timers::timer_manager->Once(player, 3500, [object](timers::CTimer*, CPlayer* player) {
+			player->Flags().set(player::flags::is_puking, false);
+			DestroyObject(object);
+			ClearAnimations(*player, false);
+			PlayerPlaySound(*player, 0, 0.0, 0.0, 0.0);
+		});
+	});
+}
+
 void player::CNeedsManager::SetHunger(float hunger)
 {
 	_hunger = (hunger < 0.f ? 0.f : (hunger > 100.f ? 100.f : hunger));
@@ -85,6 +113,20 @@ void player::CNeedsManager::SetHunger(float hunger)
 void player::CNeedsManager::SetThirst(float thirst)
 {
 	_thirst = (thirst < 0.f ? 0.f : (thirst > 100.f ? 100.f : thirst));
+	if (_bars_shown)
+		UpdateTextDraws();
+}
+
+void player::CNeedsManager::GiveHunger(float hunger)
+{
+	_hunger += (hunger < 0.f ? 0.f : (hunger > 100.f ? 100.f : hunger));
+	if (_bars_shown)
+		UpdateTextDraws();
+}
+
+void player::CNeedsManager::GiveThirst(float thirst)
+{
+	_thirst += (thirst < 0.f ? 0.f : (thirst > 100.f ? 100.f : thirst));
 	if (_bars_shown)
 		UpdateTextDraws();
 }

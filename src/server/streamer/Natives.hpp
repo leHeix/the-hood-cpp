@@ -25,7 +25,7 @@ namespace streamer
 		STREAMER_AREA_TYPE_CUBOID,
 		STREAMER_AREA_TYPE_POLYGON,
 
-		STREAMER_MAX_AREA_TYPES = STREAMER_AREA_TYPE_POLYGON
+		STREAMER_MAX_AREA_TYPES
 	};
 
 	enum object_types
@@ -93,15 +93,15 @@ namespace streamer
 		E_STREAMER_Z
 	};
 
-	constexpr auto INVALID_STREAMER_ID = 0;
-	constexpr auto STREAMER_OBJECT_SD = 300.0;
-	constexpr auto STREAMER_OBJECT_DD = 0.0;
-	constexpr auto STREAMER_PICKUP_SD = 200.0;
-	constexpr auto STREAMER_CP_SD = 200.0;
-	constexpr auto STREAMER_RACE_CP_SD = 200.0;
-	constexpr auto STREAMER_MAP_ICON_SD = 200.0;
-	constexpr auto STREAMER_3D_TEXT_LABEL_SD = 200.0;
-	constexpr auto STREAMER_ACTOR_SD = 200.0;
+	constexpr int INVALID_STREAMER_ID = 0;
+	constexpr float STREAMER_OBJECT_SD = 300.0;
+	constexpr float STREAMER_OBJECT_DD = 0.0;
+	constexpr float STREAMER_PICKUP_SD = 200.0;
+	constexpr float STREAMER_CP_SD = 200.0;
+	constexpr float STREAMER_RACE_CP_SD = 200.0;
+	constexpr float STREAMER_MAP_ICON_SD = 200.0;
+	constexpr float STREAMER_3D_TEXT_LABEL_SD = 200.0;
+	constexpr float STREAMER_ACTOR_SD = 200.0;
 
 	// Areas
 	cell CreateDynamicCircle(float x, float y, float size, int worldid = -1, int interiorid = -1, int playerid = -1, int priority = 0);
@@ -111,16 +111,25 @@ namespace streamer
 	std::vector<int> GetPlayerDynamicAreas(int playerid);
 
 	// 3D Text Labels
-	cell CreateDynamic3DTextLabel(const std::string& text, int color, float x, float y, float z, float drawdistance, int attachedplayer = INVALID_PLAYER_ID, int attachedvehicle = INVALID_VEHICLE_ID, int testlos = 0, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_3D_TEXT_LABEL_SD, int areaid = -1, int priority = 0);
+	cell CreateDynamic3DTextLabel(const std::string& text, int color, float x, float y, float z, float drawdistance, int attachedplayer = INVALID_PLAYER_ID, int attachedvehicle = INVALID_VEHICLE_ID, bool testlos = 0, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_3D_TEXT_LABEL_SD, int areaid = -1, int priority = 0);
 	cell DestroyDynamic3DTextLabel(cell id);
 	bool IsValidDynamic3DTextLabel(cell id);
-	cell GetDynamic3DTextLabelText(cell id, std::string& text);
+	std::string GetDynamic3DTextLabelText(cell id);
 	cell UpdateDynamic3DTextLabelText(cell id, int color, const std::string& text);
 
 	// Pickups
 	cell CreateDynamicPickup(int modelid, int type, float x, float y, float z, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_PICKUP_SD, int areaid = -1, int priority = 0);
 	cell DestroyDynamicPickup(cell pickupid);
 	bool IsValidDynamicPickup(cell pickupid);
+
+	// Actors
+	int CreateDynamicActor(int modelid, float x, float y, float z, float r, bool invulnerable = true, float health = 100.0, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_ACTOR_SD, int areaid = -1, int priority = 0);
+	int DestroyDynamicActor(int actorid);
+
+	// Map Icons
+	int CreateDynamicMapIcon(float x, float y, float z, int type, uint32_t color, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_MAP_ICON_SD, int style = MAPICON_LOCAL, int areaid = -1, int priority = 0);
+	int DestroyDynamicMapIcon(int iconid);
+	bool IsValidDynamicMapIcon(int iconid);
 
 	// Data Manipulation
 	namespace data
@@ -138,10 +147,24 @@ namespace streamer
 		}
 
 		template<std::size_t N>
+		bool GetArrayData(int type, int id, int data, std::array<cell, N>& dest)
+		{
+			static AMX_NATIVE native = sampgdk::FindNative("Streamer_GetArrayData");
+			return sampgdk::InvokeNative(native, fmt::format(FMT_COMPILE("iiiA[{}]i"), N).c_str(), type, id, data, dest.data(), N);
+		}
+
+		template<std::size_t N>
 		bool SetArrayData(int type, int id, int data, const cell(&dest)[N])
 		{
 			static AMX_NATIVE native = sampgdk::FindNative("Streamer_SetArrayData");
 			return sampgdk::InvokeNative(native, fmt::format(FMT_COMPILE("iiia[{}]i"), N).c_str(), type, id, data, &dest[0], N);
+		}
+
+		template<std::size_t N>
+		bool SetArrayData(int type, int id, int data, const std::array<cell, N>& dest)
+		{
+			static AMX_NATIVE native = sampgdk::FindNative("Streamer_GetArrayData");
+			return sampgdk::InvokeNative(native, fmt::format(FMT_COMPILE("iiiA[{}]i"), N).c_str(), type, id, data, dest.data(), N);
 		}
 
 		bool IsInArrayData(int type, int id, int data, int value);

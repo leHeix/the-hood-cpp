@@ -30,6 +30,7 @@ add_subdirectory(lib)
 file(GLOB_RECURSE HOOD_SRC 
 	"src/*.cpp"
 	"src/*.hpp"
+	"./cpp.hint"
 )
 add_library(the-hood SHARED
 	 "src/exports.def"

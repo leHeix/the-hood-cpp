@@ -6,7 +6,11 @@ sqlite::Statement::Statement(Database* db, const std::string& query, std::option
 	int error = sqlite3_prepare_v2(_handle->Handle(), _query.c_str(), _query.length(), &_statement, &_remaining);
 	if (error == SQLITE_ERROR)
 	{
-		throw std::runtime_error{ fmt::format("(Error {}): {}", error, sqlite3_errmsg(_handle->Handle())) };
+		std::string err = fmt::format("(Error {}): {}", error, sqlite3_errmsg(_handle->Handle()));
+		sampgdk::logprintf("[stmt] Failed to create:");
+		sampgdk::logprintf("[stmt]    %s", err.c_str());
+
+		throw std::runtime_error{ err };
 	}
 
 	if (_remaining)

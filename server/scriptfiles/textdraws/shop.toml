@@ -1,0 +1,218 @@
+#
+# TextDraw count: 12
+#
+
+## TextDraw 0
+[[textdraws]]
+position = [ 445.000000, 200.000000 ]
+text = "HUD:skipicon"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 75.000000, 74.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 111
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 1
+[[textdraws]]
+position = [ 196.000000, 200.000000 ]
+text = "HUD:skipicon"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ -74.500000, 74.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 111
+bg_color = 255
+box_color = 50
+box = 1
+proportional = 1
+selectable = 1
+
+## TextDraw 2
+[[textdraws]]
+position = [ 176.000000, 337.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 292.000000, 98.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 111
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 2729
+rotation = [ -180.000000, 0.000000, -3.000000 ]
+zoom = 0.910000
+model_colors = [ 1, 1 ]
+
+## TextDraw 3
+[[textdraws]]
+position = [ 320.000000, 394.000000 ]
+text = "~l~Comprar"
+style = 3
+letter_size = [ 0.283331, 1.149999 ]
+line_size = [ 11.000000, 41.500000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = 156
+bg_color = 0
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 4
+[[textdraws]]
+position = [ 320.000000, 390.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 2.100003 ]
+line_size = [ 298.500000, 75.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -256
+bg_color = 255
+box_color = -1094795731
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 5
+[[textdraws]]
+player = true
+position = [ 323.000000, 14.000000 ]
+text = "MMGBO ENTERPRISES"
+style = 3
+letter_size = [ 0.291666, 1.100000 ]
+line_size = [ 400.000000, 634.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795600
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 6
+[[textdraws]]
+position = [ 217.000000, -13.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 204.000000, 65.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 78
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 2580
+rotation = [ 3.000000, 2.000000, 181.000000 ]
+zoom = 0.980000
+model_colors = [ 1, 1 ]
+
+## TextDraw 7
+[[textdraws]]
+position = [ 121.000000, 216.000000 ]
+text = "_"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 74.000000, 32.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 8
+[[textdraws]]
+position = [ 445.000000, 216.000000 ]
+text = "_"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 74.000000, 32.500000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 9
+[[textdraws]]
+position = [ 297.000000, 393.000000 ]
+text = "_"
+style = 4
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 46.000000, 13.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 1
+
+## TextDraw 10
+[[textdraws]]
+player = true
+position = [ 320.000000, 370.000000 ]
+text = "$100"
+style = 3
+letter_size = [ 0.287499, 1.049998 ]
+line_size = [ 400.000000, 634.500000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = 1433087920
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 11
+[[textdraws]]
+player = true
+position = [ 320.000000, 360.000000 ]
+text = "pipsa"
+style = 2
+letter_size = [ 0.208332, 1.000000 ]
+line_size = [ 400.000000, 186.000000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795600
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
