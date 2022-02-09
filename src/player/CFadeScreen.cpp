@@ -22,7 +22,7 @@ CFadeScreen::~CFadeScreen()
 
 void CFadeScreen::Fade(unsigned char callback_alpha, std::function<void()> callback)
 {
-	std::scoped_lock lk(_mtx);
+	std::scoped_lock<std::mutex> lk(_mtx);
 
 	if (_textdraw->Shown())
 	{
@@ -33,9 +33,44 @@ void CFadeScreen::Fade(unsigned char callback_alpha, std::function<void()> callb
 	_textdraw->SetBoxColor(0);
 	_textdraw->Show();
 
-	_timer = timers::timer_manager->Repeat(20, 20, [=,this](timers::CTimer* timer) {
+	_timer = timers::timer_manager->Repeat(20, 20, [callback,callback_alpha,this](timers::CTimer* timer) {
 		std::uint8_t alpha = _textdraw->GetBoxColor();
 		
+		if (alpha == callback_alpha)
+		{
+			callback();
+		}
+
+		if (alpha == 255)
+			_in = false;
+		else if (alpha == 0 && !_in)
+		{
+			Stop();
+			return;
+		}
+
+		_textdraw->SetBoxColor((_in ? alpha + 5 : alpha - 5));
+	});
+}
+
+void CFadeScreen::Fade(unsigned char callback_alpha, bool in, std::function<void()> callback)
+{
+	std::scoped_lock<std::mutex> lk(_mtx);
+
+	if (_textdraw->Shown())
+	{
+		_timer->Killed() = true;
+		timers::timer_manager->Delete(_timer->ID());
+		_timer = nullptr;
+	}
+
+	_in = in;
+	_textdraw->SetBoxColor((_in ? 0 : 0xFF));
+	_textdraw->Show();
+
+	_timer = timers::timer_manager->Repeat(20, 20, [callback, callback_alpha, this](timers::CTimer* timer) {
+		std::uint8_t alpha = _textdraw->GetBoxColor();
+
 		if (alpha == callback_alpha)
 		{
 			callback();
@@ -66,12 +101,12 @@ void CFadeScreen::Stop()
 
 void CFadeScreen::Pause()
 {
-	std::scoped_lock lk(_mtx);
+	std::scoped_lock<std::mutex> lk(_mtx);
 	_timer->Pause();
 }
 
 void CFadeScreen::Resume()
 {
-	std::scoped_lock lk(_mtx);
+	std::scoped_lock<std::mutex> lk(_mtx);
 	_timer->Resume();
 }

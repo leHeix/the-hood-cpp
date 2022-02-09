@@ -87,46 +87,47 @@ void player::CNeedsManager::Puke()
 	// Start player puke anim
 	_player->SetFacingAngle(0.f);
 	auto& pos = _player->Position();
-	ApplyAnimation(*_player, "FOOD", "EAT_VOMIT_P", 4.0, false, false, false, true, 0, false);
-	PlayerPlaySound(*_player, 1169, 0.0, 0.0, 0.0);
+	ApplyAnimation(*_player, "FOOD", "null", 4.1F, false, false, false, false, 0, false);
+	ApplyAnimation(*_player, "FOOD", "EAT_VOMIT_P", 4.0F, false, false, false, true, 0, false);
+	PlayerPlaySound(*_player, 1169, pos.x, pos.y, pos.z);
 
 	timers::timer_manager->Once(_player, 4000, [](timers::CTimer*, CPlayer* player) {
 		auto& pos = player->Position();
-		auto object = CreateObject(18722, pos.x + 0.355, pos.y - 0.116, pos.z - 1.6, 0.0, 0.0, 0.0, 0.0);
+		auto object = CreateObject(18722, pos.x + 0.355F, pos.y - 0.116F, pos.z - 1.6F, 0.F, 0.F, 0.F, 0.F);
 
 		timers::timer_manager->Once(player, 3500, [object](timers::CTimer*, CPlayer* player) {
 			player->Flags().set(player::flags::is_puking, false);
 			DestroyObject(object);
 			ClearAnimations(*player, false);
-			PlayerPlaySound(*player, 0, 0.0, 0.0, 0.0);
+			PlayerPlaySound(*player, 0, 0.F, 0.F, 0.F);
 		});
 	});
 }
 
 void player::CNeedsManager::SetHunger(float hunger)
 {
-	_hunger = (hunger < 0.f ? 0.f : (hunger > 100.f ? 100.f : hunger));
+	_hunger = std::clamp(hunger, 0.F, 100.F);
 	if (_bars_shown)
 		UpdateTextDraws();
 }
 
 void player::CNeedsManager::SetThirst(float thirst)
 {
-	_thirst = (thirst < 0.f ? 0.f : (thirst > 100.f ? 100.f : thirst));
+	_thirst = std::clamp(thirst, 0.F, 100.F);
 	if (_bars_shown)
 		UpdateTextDraws();
 }
 
 void player::CNeedsManager::GiveHunger(float hunger)
 {
-	_hunger += (hunger < 0.f ? 0.f : (hunger > 100.f ? 100.f : hunger));
+	_hunger += std::clamp(hunger, 0.F, 100.F);
 	if (_bars_shown)
 		UpdateTextDraws();
 }
 
 void player::CNeedsManager::GiveThirst(float thirst)
 {
-	_thirst += (thirst < 0.f ? 0.f : (thirst > 100.f ? 100.f : thirst));
+	_thirst += std::clamp(thirst, 0.F, 100.F);
 	if (_bars_shown)
 		UpdateTextDraws();
 }

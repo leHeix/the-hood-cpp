@@ -28,6 +28,8 @@
 #include <bit>
 #include <numbers>
 #include <syncstream>
+#include <charconv>
+#include <concepts>
 
 #else
 

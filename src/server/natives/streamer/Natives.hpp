@@ -107,6 +107,8 @@ namespace streamer
 	cell CreateDynamicCircle(float x, float y, float size, int worldid = -1, int interiorid = -1, int playerid = -1, int priority = 0);
 	cell CreateDynamicCylinder(float x, float y, float minz, float maxz, float size, int worldid = -1, int interiorid = -1, int playerid = -1);
 	cell CreateDynamicSphere(float x, float y, float z, float size, int worldid = -1, int interiorid = -1, int playerid = -1);
+	int CreateDynamicRectangle(float minx, float miny, float maxx, float maxy, int worldid = -1, int interiorid = -1, int playerid = -1, int priority = 0);
+	int DestroyDynamicArea(int areaid);
 	cell GetPlayerNumberDynamicAreas(int playerid);
 	std::vector<int> GetPlayerDynamicAreas(int playerid);
 
@@ -125,12 +127,39 @@ namespace streamer
 	// Actors
 	int CreateDynamicActor(int modelid, float x, float y, float z, float r, bool invulnerable = true, float health = 100.0, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_ACTOR_SD, int areaid = -1, int priority = 0);
 	int DestroyDynamicActor(int actorid);
+	int ApplyDynamicActorAnimation(int actorid, const std::string_view animlib, const std::string_view animname, float fdelta, bool loop, int lockx, int locky, int freeze, int time);
 
 	// Map Icons
 	int CreateDynamicMapIcon(float x, float y, float z, int type, uint32_t color, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_MAP_ICON_SD, int style = MAPICON_LOCAL, int areaid = -1, int priority = 0);
 	int DestroyDynamicMapIcon(int iconid);
 	bool IsValidDynamicMapIcon(int iconid);
 
+	// Objects
+	int CreateDynamicObject(int modelid, float x, float y, float z, float rx, float ry, float rz, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_OBJECT_SD, float drawdistance = STREAMER_OBJECT_DD, int areaid = -1, int priority = 0);
+	int DestroyDynamicObject(int objectid);
+	int SetDynamicObjectMaterial(int objectid, int materialindex, int modelid, const std::string& txdname, const std::string& texturename, int materialcolor = 0);
+
+	// Checkpoints
+	int CreateDynamicCP(float x, float y, float z, float size, int worldid = -1, int interiorid = -1, int playerid = -1, float streamdistance = STREAMER_CP_SD, int areaid = -1, int priority = 0);
+	int DestroyDynamicCP(int checkpointid);
+	bool IsValidDynamicCP(int checkpointid);
+	int TogglePlayerDynamicCP(int playerid, int checkpointid, bool toggle);
+	int TogglePlayerAllDynamicCPs(int playerid, bool toggle);
+	bool IsPlayerInDynamicCP(int playerid, int checkpointid);
+	int GetPlayerVisibleDynamicCP(int playerid);
+
+	// Updates
+	void ProcessActiveItems();
+	bool ToggleIdleUpdate(int playerid, bool toggle);
+	bool IsTogggleIdleUpdate(int playerid);
+	bool ToggleCameraUpdate(int playerid, bool toggle);
+	bool IsToggleCameraUpdate(int playerid);
+	bool ToggleItemUpdate(int playerid, int type, bool toggle);
+	bool IsToggleItemUpdate(int playerid, int type);
+	float GetLastUpdateTime();
+	bool Update(int playerid, streamer::types type = (streamer::types)-1);
+	bool UpdateEx(int playerid, float x, float y, float z, int worldid = -1, int interiorid = -1, int type = -1, int compensatedtime = -1, bool freezeplayer = true);
+	
 	// Data Manipulation
 	namespace data
 	{

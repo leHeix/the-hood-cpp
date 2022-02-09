@@ -73,6 +73,7 @@
 #include <glm/glm.hpp>
 #include <glm/common.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/random.hpp>
 #include <urmem/urmem.hpp>
 #if defined __clang__
 	#pragma clang diagnostic push
@@ -100,8 +101,13 @@ using Random = effolkronium::random_static;
 	using SOCKET = uintptr_t;
 #endif
 
+
 //
 // Source
+
+// Native replacements
+#include "Natives.hpp"
+
 #include "Utils.hpp"
 
 class CPlayer;
@@ -110,8 +116,10 @@ class CPlayer;
 #include "hooks/CRakServer.hpp"
 #include "hooks/CConsole.hpp"
 #include "hooks/Publics.hpp"
+#include "hooks/Server.hpp"
 
-#include "server/streamer/Natives.hpp"
+#include "server/natives/streamer/Natives.hpp"
+#include "server/natives/colandreas/Natives.hpp"
 #include "server/Database.hpp"
 #include "server/commands/ArgumentStore.hpp"
 #include "server/commands/Commands.hpp"
@@ -120,14 +128,18 @@ class CPlayer;
 #include "server/textdraws/TextDraw.hpp"
 #include "server/EnterExitManager.hpp"
 #include "server/shops/ShopManager.hpp"
+#include "server/vehicles/CVehicle.hpp"
+#include "server/vehicles/CPlayerVehicleManager.hpp"
 
 #include "player/CFadeScreen.hpp"
 #include "player/CChat.hpp"
 #include "player/Notifications.hpp"
 #include "player/Needs.hpp"
+#include "player/KeyGame.hpp"
 #include "player/auth/Auth.hpp"
 #include "player/CPlayer.hpp"
 #include "player/CPlayerPool.hpp"
+#include "player/jobs/Jobs.hpp"
 
 namespace server
 {

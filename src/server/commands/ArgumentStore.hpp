@@ -2,9 +2,6 @@
 
 namespace commands
 {
-	template<class T>
-	concept Float = std::is_floating_point_v<T>;
-
 	class argument_store
 	{
 		bool _final{ false };
@@ -31,17 +28,15 @@ namespace commands
 
 		argument_store& operator>>(CPlayer*& data);
 		argument_store& operator>>(int& data);
-		template<Float T>
+		template<std::floating_point T>
 		argument_store& operator>>(T& data)
 		{
 			std::string chunk = GetNextChunk();
 
-			char* p;
-			double val = std::strtod(chunk.c_str(), &p);
-			if (*p != '\0')
+			auto [ptr, ec] { std::from_chars(chunk.data(), chunk.data() + chunk.size(), data)};
+			if (ec != std::errc{})
 				throw type_error{ "floating-point number", "not all data on chunk is a floating-point number" };
 
-			data = static_cast<T>(val);
 			++_parsed_arguments;
 			return *this;
 		}

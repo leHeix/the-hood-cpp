@@ -3,7 +3,7 @@
 std::unique_ptr<timers::CTimerManager> timers::timer_manager = std::make_unique<timers::CTimerManager>();
 
 timers::CTimer::CTimer(uv_loop_t* loop, unsigned int time, const std::optional<unsigned int>& repeat_time, std::function<void(CTimer*)> callback)
-	: _handle(new uv_timer_t), _time(time), _repeat(repeat_time), _callback(std::move(callback))
+	: _handle(new uv_timer_t), _time(time), _callback(std::move(callback)), _repeat(repeat_time)
 {
 	uv_timer_init(loop, _handle);
 	_handle->data = static_cast<void*>(this);
@@ -118,6 +118,22 @@ timers::CTimer* timers::CTimerManager::Once(CPlayer* player, unsigned delay, std
 	return _timers[_max_id].get();
 }
 
+timers::CTimer* timers::CTimerManager::Repeat(CPlayer* player, unsigned delay_once, unsigned delay_repeat, std::function<void(CTimer*, CPlayer*)> callback)
+{
+	std::scoped_lock<std::mutex> lk(_mutex);
+
+	std::function<void(CTimer*)> fun = std::bind(callback, std::placeholders::_1, player);
+
+	auto timer = std::make_unique<CTimer>(uv_default_loop(), delay_once, delay_repeat, std::move(fun));
+	timer->ID() = ++_max_id;
+	timer->Start();
+
+	_timers[_max_id] = std::move(timer);
+	_player_timers_map.insert({ player, _max_id });
+
+	return _timers[_max_id].get();
+}
+
 /*
 timers::CTimer* timers::CTimerManager::Repeat(CPlayer* player, unsigned delay_once, unsigned delay_repeat, std::function<void(CTimer*, CPlayer*)> callback)
 {
@@ -155,6 +171,11 @@ void timers::CTimerManager::Delete(unsigned id)
 			}
 		}
 	}
+}
+
+void timers::CTimerManager::Delete(CTimer* timer)
+{
+	Delete(timer->ID());
 }
 
 cell timers::OnPlayerDisconnect(std::uint16_t playerid, std::uint8_t reason)

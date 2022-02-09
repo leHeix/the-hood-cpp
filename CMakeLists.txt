@@ -30,7 +30,6 @@ add_subdirectory(lib)
 file(GLOB_RECURSE HOOD_SRC 
 	"src/*.cpp"
 	"src/*.hpp"
-	"./cpp.hint"
 )
 add_library(the-hood SHARED
 	 "src/exports.def"
@@ -48,9 +47,14 @@ set_target_properties(the-hood
 		PREFIX ""
 )
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-	target_compile_options(the-hood PUBLIC "-Wno-invalid-source-encoding")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		target_compile_options(the-hood PUBLIC -Wno-invalid-source-encoding)
+	endif()
+
+	target_compile_options(the-hood PUBLIC -Wno-multichar)
 endif()
+
 
 if(NOT MSVC)
 	target_precompile_headers(the-hood PUBLIC "src/pch.h")

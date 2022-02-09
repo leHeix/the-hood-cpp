@@ -16,7 +16,7 @@ shops::CShop* shops::CShopManager::Create(const std::string& name, glm::vec3 pos
 	shop->cam_pos = camera.first;
 	shop->cam_look_at = camera.second;
 	shop->position = position;
-	shop->label = streamer::CreateDynamic3DTextLabel(fmt::format("{{ED2B2B}}{}\n{{DADADA}}Presiona {{ED2B2B}}Y {{DADADA}}para ver el inventario", name), 0xED2B2BFF, position.x, position.y, position.z, 10.f, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 1, world, interior);;
+	shop->label = streamer::CreateDynamic3DTextLabel(fmt::format("{{ED2B2B}}{}\n{{DADADA}}Presiona {{ED2B2B}}Y {{DADADA}}para ver el inventario", name), 0xED2B2BFF, position.x, position.y, position.z, 10.f, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 1, world, interior);
 	shop->area = streamer::CreateDynamicCircle(position.x, position.y, 1.f, world, interior);
 	
 	cell info[2] = { 'SHOP', static_cast<cell>(_shops.size()) };
@@ -155,9 +155,11 @@ static cell RegisterShopCallbacks()
 		if (!player->Flags().test(player::flags::can_use_shop_buttons))
 			return;
 
-		if (player->CurrentShop()->TriggerCallback(player, shop_manager->PlayerData(player).selected_item->get()))
+		auto& item = (*shop_manager->PlayerData(player).selected_item);
+
+		if (player->CurrentShop()->TriggerCallback(player, item.get()))
 		{
-			player->GiveMoney(-((*shop_manager->PlayerData(player).selected_item)->price));
+			player->GiveMoney(-item->price);
 			PlayerPlaySound(*player, 1054, 0.0, 0.0, 0.0);
 		}
 		else
@@ -171,7 +173,7 @@ static cell RegisterShopCallbacks()
 
 static CPublicHook<RegisterShopCallbacks> _s_ogmi("OnGameModeInit");
 
-static cell CancelPlayerShopAction(std::uint16_t playerid)
+static public_hook _s_opctds("OnPlayerCancelTextDrawSelection", +[](std::uint16_t playerid) -> cell
 {
 	auto* player = server::player_pool[playerid];
 	if (player->Flags().test(player::flags::using_shop))
@@ -181,6 +183,4 @@ static cell CancelPlayerShopAction(std::uint16_t playerid)
 	}
 
 	return 1;
-}
-
-static CPublicHook<CancelPlayerShopAction> _s_opctds("OnPlayerCancelTextDrawSelection");
+});

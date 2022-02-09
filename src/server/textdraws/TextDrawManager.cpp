@@ -120,7 +120,7 @@ void server::TextDrawList::Show(CPlayer* player, unsigned short first, unsigned 
 		CreateForPlayer(player);
 	}
 
-	for (auto last_f = (last == (unsigned short)-1 ? _textdraws.size() : last); first < last_f; ++first)
+	for (auto last_f = (last == static_cast<uint16_t>(-1) ? _textdraws.size() : last); first < last_f; ++first)
 	{
 		_textdraws[first]->Show(player);
 	}
@@ -138,18 +138,18 @@ void server::TextDrawList::Show(CPlayer* player, unsigned short global_first, un
 		CreateForPlayer(player);
 	}
 
-	if (global_first != (unsigned short)-1)
+	if (global_first != static_cast<uint16_t>(-1))
 	{
-		for (std::uint16_t last = (global_last == (unsigned short)-1 ? _textdraws.size() : global_last); global_first < last; ++global_first)
+		for (std::uint16_t last = (global_last == static_cast<uint16_t>(-1) ? _textdraws.size() : global_last); global_first < last; ++global_first)
 		{
 			_textdraws[global_first]->Show(player);
 		}
 	}
 
-	if (player_first != (unsigned short)-1)
+	if (player_first != static_cast<uint16_t>(-1))
 	{
 		auto playerid = player->PlayerId();
-		for (std::uint16_t last = (player_last == (unsigned short)-1 ? _player_textdraws[playerid].size() : player_last); player_first < last; ++player_first)
+		for (std::uint16_t last = (player_last == static_cast<uint16_t>(-1) ? _player_textdraws[playerid].size() : player_last); player_first < last; ++player_first)
 		{
 			_player_textdraws[playerid][player_first]->Show();
 		}

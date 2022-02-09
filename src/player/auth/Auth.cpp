@@ -34,6 +34,8 @@ namespace auth
 			textdraw_manager["player_customization"]->Hide(server::player_pool[playerid]);
 
 			const auto screen_blacked = [=] {
+				PlayerPlaySound(playerid, 0, 0.f, 0.f, 0.f);
+
 				auto* player = server::player_pool[playerid];
 				
 				std::thread([](std::uint16_t playerid) {
@@ -249,6 +251,7 @@ namespace auth
 					ApplyAnimation(playerid, "CRIB", "PED_CONSOLE_LOOP", 4.1f, true, false, false, 0, false, false);
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_SMOKE_CIGGY);
 					SetPlayerAttachedObject(playerid, INTRO_PROP_OBJECT_INDEX, 18875, 6, 0.15f, 0.15f, 0.0f, 0.0f, 0.0f, -110.59f, 1.0f, 1.0f, 1.0f, -1, -1);
+					PlayerPlaySound(playerid, 23600, 0.f, 0.f, 0.f); // VIDEO_GAME_LOOP
 
 					player->Flags().set(player::flags::customizing_player, true);
 					textdraw_manager["player_customization"]->GetPlayerTextDraws(player)[0]->SetText(std::to_string(player->Age()));

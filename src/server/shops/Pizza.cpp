@@ -1,6 +1,6 @@
 #include "../../main.hpp"
 
-public_hook _s_pz_ogmi("OnGameModeInit", +[]()
+static public_hook _s_pz_ogmi("OnGameModeInit", +[]()
 {
 	sampgdk::logprintf("[stores:pizza] Registering...");
 
@@ -19,6 +19,15 @@ public_hook _s_pz_ogmi("OnGameModeInit", +[]()
 			player->Needs()->EatCount() = 0u;
 		}
 
+		player->Needs()->EatCount()++;
+		player->Needs()->LastEatTick() = std::chrono::steady_clock::now();
+
+		if (player->Needs()->EatCount() >= 5u)
+		{
+			player->Needs()->Puke();
+			return false;
+		}
+
 		switch (utils::hash(item->name))
 		{
 			case "Porción de pizza pepperoni"_hash:
@@ -29,14 +38,6 @@ public_hook _s_pz_ogmi("OnGameModeInit", +[]()
 				
 				break;
 			}
-		}
-
-		player->Needs()->EatCount()++;
-		player->Needs()->LastEatTick() = std::chrono::steady_clock::now();
-
-		if (player->Needs()->EatCount() >= 5u)
-		{
-			player->Needs()->Puke();
 		}
 
 		return true;
@@ -53,5 +54,3 @@ public_hook _s_pz_ogmi("OnGameModeInit", +[]()
 
 	return 1;
 });
-
-// static CPublicHook<RegisterStores> _s_conv_ogmi("OnGameModeInit");

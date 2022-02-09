@@ -1,6 +1,6 @@
 #include "../../main.hpp"
 
-static cell RegisterStores()
+static public_hook _s_conv_ogmi("OnGameModeInit", +[]()
 {
 	sampgdk::logprintf("[stores:convenience] Registering...");
 
@@ -30,5 +30,4 @@ static cell RegisterStores()
 	shop->AddItem("Vaso de café", 19835, 10, { 0.0, 0.0, 0.0 });
 
 	return 1;
-}
-static CPublicHook<RegisterStores> _s_conv_ogmi("OnGameModeInit");
+});

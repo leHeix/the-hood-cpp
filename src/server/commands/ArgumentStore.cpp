@@ -116,10 +116,10 @@ commands::argument_store& commands::argument_store::operator>>(CPlayer*& data)
 	std::string chunk = GetNextChunk();
 	++_parsed_arguments;
 
-	char* p;
-	long playerid = std::strtol(chunk.c_str(), &p, 10);
+	std::uint16_t playerid{};
+	auto [ptr, ec] { std::from_chars(chunk.data(), chunk.data() + chunk.size(), playerid)};
 
-	if (*p == '\0')
+	if (ec == std::errc{})
 	{
 		if (server::player_pool.Exists(playerid))
 		{

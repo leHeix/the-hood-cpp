@@ -2,23 +2,23 @@
 
 namespace player
 {
-	constexpr auto MAX_NOTIFICATIONS = 3;
-	constexpr auto NOTIFICATION_DELTA = 1;
-	constexpr auto NOT_LAST_POS_X = 108.0f;
-	constexpr auto NOT_INITIAL_POS_X = -100.0f;
-	constexpr auto NOT_SUB_VAL = 208.0f;
-	constexpr auto NOT_DISTANCE = 46.0f;
-
-	static_assert(MAX_NOTIFICATIONS <= 8);
-
-	struct notification_data
-	{
-		std::string message;
-		std::uint16_t time;
-	};
-
 	class CNotificationManager
 	{
+		static constexpr auto MAX_NOTIFICATIONS = 3;
+		static constexpr auto NOTIFICATION_DELTA = 1;
+		static constexpr auto NOT_LAST_POS_X = 108.0f;
+		static constexpr auto NOT_INITIAL_POS_X = -100.0f;
+		static constexpr auto NOT_SUB_VAL = 208.0f;
+		static constexpr auto NOT_DISTANCE = 46.0f;
+
+		static_assert(MAX_NOTIFICATIONS <= 8);
+
+		struct notification_data
+		{
+			std::string message;
+			std::uint16_t time;
+		};
+
 		struct notification
 		{
 			std::uint16_t time;
@@ -30,6 +30,12 @@ namespace player
 		std::queue<notification_data> _pending;
 		std::bitset<MAX_NOTIFICATIONS> _shown;
 		std::array<notification, MAX_NOTIFICATIONS> _notifications;
+
+		timers::CTimer* _beating_text_timer{ nullptr };
+		uint8_t _beating_text_data{ 0u };
+		std::chrono::steady_clock::time_point _beating_text_tick;
+
+		static void ProcessBeatingText(timers::CTimer* timer, CPlayer* player, std::pair<uint8_t, uint8_t> alpha, std::uint16_t time);
 
 		static void MoveRight(timers::CTimer* timer, CPlayer* player, std::uint8_t idx);
 		static void MoveLeft(timers::CTimer* timer, CPlayer* player, std::uint8_t idx);
@@ -46,5 +52,6 @@ namespace player
 		}
 
 		bool Show(const std::string& message, std::uint16_t time_ms);
+		void ShowBeatingText(std::uint16_t time, std::uint32_t color, std::pair<std::uint8_t, std::uint8_t> alpha, const std::string& text);
 	};
 }

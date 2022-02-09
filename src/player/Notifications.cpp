@@ -26,9 +26,7 @@ void player::CNotificationManager::MoveRight(timers::CTimer* timer, CPlayer* pla
 	ptds[1]->SetPosition({ (17.f - NOT_SUB_VAL) + x, 293.f - (46.f * idx) });
 	ptds[2]->SetPosition({ (20.50f - NOT_SUB_VAL) + x, 293.f - (46.f * idx) });
 	ptds[3]->SetPosition({ (29.60f - NOT_SUB_VAL) + x, 299.f - (46.f * idx) });
-	ptds[4]->SetPosition({ (50.f - NOT_SUB_VAL) + x, 299.f - (46.f * idx) });
-
-	textdraws->Show(player);
+	ptds[4]->SetPosition({ (48.f - NOT_SUB_VAL) + x, 299.f - (46.f * idx) });
 
 	if (t >= 1.0)
 	{
@@ -121,3 +119,113 @@ bool player::CNotificationManager::Show(const std::string& message, std::uint16_
 
 	return true;
 }
+
+
+void player::CNotificationManager::ShowBeatingText(std::uint16_t time, std::uint32_t color, std::pair<std::uint8_t, std::uint8_t> alpha, const std::string& text)
+{
+	if (_beating_text_timer)
+	{
+		_beating_text_timer->Killed() = true;
+		timers::timer_manager->Delete(_beating_text_timer->ID());
+	}
+
+	std::string fixed_str{ text };
+	std::replace(fixed_str.begin(), fixed_str.end(), ' ', '_');
+
+	auto* textdraw = textdraw_manager.LoadFile("beating_text.toml", "beating_text");
+	textdraw->GetPlayerTextDraws(_player)[0]
+		->SetText(fixed_str)
+		->SetLetterColor((color << 8) ^ alpha.second)
+		->SetBackgroundColor(alpha.second);
+
+	textdraw->Show(_player);
+
+	_beating_text_tick = std::chrono::steady_clock::now();
+	_beating_text_timer = timers::timer_manager->Repeat(_player, 10, 10, CNotificationManager::ProcessBeatingText, alpha, time);
+}
+
+void player::CNotificationManager::ProcessBeatingText(timers::CTimer* timer, CPlayer* player, std::pair<uint8_t, uint8_t> alpha, std::uint16_t time)
+{
+	auto& textdraw = textdraw_manager["beating_text"]->GetPlayerTextDraws(player)[0];
+	uint32_t color = textdraw->GetLetterColor();
+	int16_t current_alpha = (color & 0xFF);
+
+	uint8_t& data = player->Notifications()->_beating_text_data;
+	bool should_hide = (data & 1);
+	bool phase = (data & 0b10);
+
+	if (!should_hide)
+	{
+		if (!phase && current_alpha < alpha.first)
+		{
+			data |= 0b10;
+		}
+		else if(current_alpha >= alpha.second)
+		{
+			data &= ~0b10;
+		}
+
+		if (!phase)
+		{
+			current_alpha -= 4;
+		}
+		else
+		{
+			current_alpha += 4;
+		}
+	}
+	else
+	{
+		if (current_alpha <= 0)
+		{
+			data = 0u;
+			textdraw->Hide();
+			timer->Killed() = true;
+			timers::timer_manager->Delete(timer->ID());
+			player->Notifications()->_beating_text_timer = nullptr;
+			return;
+		}
+
+		current_alpha -= 4;
+	}
+
+	current_alpha = std::clamp<int16_t>(current_alpha, 0, 255);
+	color = (color & 0xFFFFFF00) | current_alpha;
+	textdraw
+		->SetLetterColor(color)
+		->SetBackgroundColor(current_alpha);
+
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - player->Notifications()->_beating_text_tick);
+	if (!(data & 1) && duration > std::chrono::milliseconds{ time })
+	{
+		data |= 1;
+	}
+}
+
+command notitestcmd("noti_test", [](CPlayer* player, commands::argument_store args) {
+	std::string text;
+	try
+	{
+		args >> cmd::argument_store::final >> text;
+	}
+	catch (...)
+	{
+
+	}
+
+	player->Notifications()->Show(text, 2500);
+});
+
+command notibtcmd("notibt", [](CPlayer* player, commands::argument_store args) {
+	std::string text;
+	try
+	{
+		args >> cmd::argument_store::final >> text;
+	}
+	catch (...)
+	{
+
+	}
+
+	player->Notifications()->ShowBeatingText(5000, 0xED2B2B, { 100, 255 }, text);
+});

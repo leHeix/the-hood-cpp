@@ -5,6 +5,5 @@ EXPORTS
 	Supports
 	ProcessTick
 	OnGameModeInit
-	OnPlayerConnect
 	OnPlayerDisconnect
 	OnPublicCall

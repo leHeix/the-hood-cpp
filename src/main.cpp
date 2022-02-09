@@ -12,14 +12,20 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void** ppData)
 	server::plugin_data = ppData;
 	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
 
-	return sampgdk::Load(ppData);
+	bool result = sampgdk::Load(ppData);
+	if (result)
+	{
+		server::hooks::Install();
+	}
+
+	return result;
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL Unload()
 {
 	if (uv_loop_close(uv_default_loop()) == UV_EBUSY)
 	{
-		uv_walk(uv_default_loop(), [](uv_handle_t* h, void* arg) {
+		uv_walk(uv_default_loop(), [](uv_handle_t* h, void* /*arg*/) {
 			uv_close(h, [](uv_handle_t* h) {
 				if (!h || !h->loop || uv_is_closing(h))
 					return;
@@ -48,30 +54,15 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 
 // -
 
-PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
-{
-	sampgdk::logprintf("\n\n\n");
-	
-	sampgdk::logprintf("   /////////////////////////////////////////");
-	sampgdk::logprintf("   ///                                   ///");
-	sampgdk::logprintf(fmt::format(FMT_COMPILE("   ///{: ^35}///"), "The Hood").c_str());
-	sampgdk::logprintf("   ///                                   ///");
-	sampgdk::logprintf("   /////////////////////////////////////////");
-	sampgdk::logprintf("   ~ Applying patches...");
-
-	{
-		unsigned char* const wrong_pid_branch = reinterpret_cast<unsigned char*>(_WIN32 ? 0x004591FC : 0x080752FC);
-		constexpr auto size_wrong_pid_branch = (_WIN32 ? 82 : 114);
-		utils::unlocked_scope lk(wrong_pid_branch, size_wrong_pid_branch);
-		std::memset(wrong_pid_branch, 0x90, size_wrong_pid_branch);
-	}
+static public_prehook _ph_init_ogmi("OnGameModeInit", [] {
+	sampgdk::logprintf("[server:db] Opening database...");
 
 	try
 	{
 		server::database = std::make_unique<sqlite::Database>("scriptfiles/the_hood.db");
-		sampgdk::logprintf("   ~ Database file opened.");
+		sampgdk::logprintf("[server:db] Database file opened.");
 
-		sampgdk::logprintf("   ~ Enabling database optimizations...");
+		sampgdk::logprintf("[server:db] Enabling database optimizations...");
 		server::database->Exec(
 			"PRAGMA TEMP_STORE = FILE; "
 			"PRAGMA JOURNAL_MODE = TRUNCATE; "
@@ -79,13 +70,11 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 			"PRAGMA LOCKING_MODE = NORMAL;"
 		);
 
-		sampgdk::logprintf("   ~ Setting up database...");
+		sampgdk::logprintf("[server:db] Setting up database...");
 		std::ifstream struct_file{ "./scriptfiles/struct.sql" };
 		if (!struct_file.good())
 		{
-			sampgdk::logprintf("   [!] Failed to initialize database:");
-			sampgdk::logprintf("   [!]   Couldn't find database structure file.");
-			std::exit(1);
+			throw std::runtime_error{ "Couldn't find database structure file." };
 		}
 
 		std::stringstream queries;
@@ -96,15 +85,30 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 	}
 	catch (const std::exception& e)
 	{
-		sampgdk::logprintf("   [!] Failed to open or initialize database:");
-		sampgdk::logprintf("   [!]   %s", e.what());
+		sampgdk::logprintf("[server:db!] Failed to open or initialize database:");
+		sampgdk::logprintf("[server:db!]   %s", e.what());
 		std::exit(1);
 	}
 
-	sampgdk::logprintf("   ~ Database setup done.");
+	sampgdk::logprintf("[server:db] Database setup done.");
 
-	net::RakServer = std::make_unique<net::CRakServer>(server::plugin_data);
 	server::console = std::make_unique<CConsole>();
+	net::RakServer = std::make_unique<net::CRakServer>(server::plugin_data); 
+	sampgdk::logprintf("[server:patches] Applying patches...");
+	utils::nop(reinterpret_cast<void*>(_WIN32 ? 0x004591FC : 0x080752FC), (_WIN32 ? 82 : 114));
+
+	return 1;
+});
+
+PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
+{
+	sampgdk::logprintf("\n\n\n");
+	
+	sampgdk::logprintf("   /////////////////////////////////////////");
+	sampgdk::logprintf("   ///                                   ///");
+	sampgdk::logprintf(fmt::format(FMT_COMPILE("   ///{: ^35}///"), "The Hood").c_str());
+	sampgdk::logprintf("   ///                                   ///");
+	sampgdk::logprintf("   /////////////////////////////////////////");
 
 	SetNameTagDrawDistance(20.f);
 	SendRconCommand("hostname 	  .•°   The Hood (RPG en Español)   °•.");
@@ -131,9 +135,26 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit()
 	SetNameTagDrawDistance(25.f);
 
 	sampgdk::logprintf("\n\n\n");
+	
+	colandreas::Init();
 
 	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - load_timestamp);
 	sampgdk::logprintf("Took %i milliseconds to load the gamemode.", ms.count());
 
 	return true;
 }
+
+command playsoundcmd("playsound", [](CPlayer* player, cmd::argument_store args) {
+	int sound;
+	try
+	{
+		args >> sound;
+	}
+	catch (...)
+	{
+		player->Chat()->Send(-1, "/playsound id");
+		return;
+	}
+
+	PlayerPlaySound(*player, sound, 0.f, 0.f, 0.f);
+});

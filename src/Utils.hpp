@@ -40,6 +40,12 @@ namespace utils
 		}
 	};
 
+	inline void nop(void* dest, size_t bytecount)
+	{
+		unlocked_scope lk(dest, bytecount);
+		std::memset(dest, 0x90, bytecount);
+	}
+
 	namespace
 	{
 		constexpr uint32_t FNV_PRIME = 16777619U;

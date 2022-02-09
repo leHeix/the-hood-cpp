@@ -34,11 +34,19 @@ namespace player
 		global_operator,
 		admin
 	};
+
+	enum job : std::uint8_t
+	{
+		none,
+		lawnmower,
+		gunsmaker,
+	};
 }
 
 class CPlayer
 {
 public:
+	static constexpr inline auto MAX_PLAYER_VEHICLES = 2;
 	using dialog_callback_t = std::function<void(CPlayer*, bool, unsigned char, std::string)>;
 
 private:
@@ -52,6 +60,7 @@ private:
 	std::unique_ptr<player::CNotificationManager> _notifications;
 	std::unique_ptr<player::CNeedsManager> _needs;
 	std::unique_ptr<CChat> _chat;
+	std::unique_ptr<CKeyGame> _keygame;
 	server::TextDrawIndexManager _td_indexer{};
 	
 	std::string _ip_address;
@@ -75,6 +84,13 @@ private:
 	bool _widescreen{ false };
 	shops::CShop* _shop{ nullptr };
 
+	// Jobs
+	struct job_data
+	{
+		int paycheck{ 0 };
+		player::job current_job{ player::job::none };
+	} _job{};
+
 	// Dialogs
 	std::optional<dialog_callback_t> _dialog_callback{ std::nullopt };
 	bool _dialog_shown{ false };
@@ -84,6 +100,9 @@ private:
 
 	// Commands
 	std::chrono::steady_clock::time_point _last_command{};
+
+	// Vehicles
+	std::vector<CVehicle*> _vehicles;
 
 	friend cell PlayerDialog_OnDialogResponse(std::uint16_t playerid, short dialogid, bool response, int listitem, std::string inputtext);
 	friend bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* params, cell* retval);
@@ -122,6 +141,8 @@ public:
 	[[nodiscard]] inline const auto* Needs() const noexcept { return _needs.get(); }
 	[[nodiscard]] inline auto* Chat() noexcept { return _chat.get(); }
 	[[nodiscard]] inline const auto* Chat() const noexcept { return _chat.get(); }
+	[[nodiscard]] inline auto* KeyGame() noexcept { return _keygame.get(); }
+	[[nodiscard]] inline const auto* KeyGame() const noexcept { return _keygame.get(); }
 	IO_GETTER_SETTER(CurrentShop, _shop)
 
 	IO_GETTER_SETTER(TextDraws, _td_indexer)
@@ -144,6 +165,9 @@ public:
 	IO_GETTER_SETTER(PhoneNumber, _phone_number)
 	IO_GETTER_SETTER(PausedTime, _paused_time)
 	IO_GETTER_SETTER(LastCommandTick, _last_command)
+	IO_GETTER_SETTER(Job, _job.current_job)
+	IO_GETTER_SETTER(JobData, _job)
+	IO_GETTER_SETTER(Vehicles, _vehicles)
 
 	// Custom data manipulation
 	template<class T>

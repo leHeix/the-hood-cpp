@@ -77,7 +77,7 @@ selectable = 0
 ## TextDraw 4
 [[textdraws]]
 player = true
-position = [ 50.000000, 293.000000 ]
+position = [ 48.000000, 293.000000 ]
 text = "has mamado el guebo?"
 style = 1
 letter_size = [ 0.208333, 1.000000 ]

@@ -43,7 +43,7 @@ namespace net
 
 		stObjectMaterial() = default;
 		stObjectMaterial(unsigned short materialid, unsigned short modelid, const std::string& txdname, const std::string& texturename, unsigned int color)
-			: material_id(materialid), model_id(modelid), txd_name(txdname), texture_name(texturename), material_color(color) { };
+			: material_id(materialid), model_id(modelid), txd_name(txdname), texture_name(texturename), material_color(color) { }
 	};
 
 	struct stObjectMaterialText

@@ -5,7 +5,8 @@ CPlayer::CPlayer(std::uint16_t playerid)
 		_fadescreen(std::make_unique<CFadeScreen>(_playerid)),
 		_notifications(std::make_unique<player::CNotificationManager>(this)),
 		_needs(std::make_unique<player::CNeedsManager>(this)),
-		_chat(std::make_unique<CChat>(this))
+		_chat(std::make_unique<CChat>(this)),
+		_keygame(std::make_unique<CKeyGame>(this))
 {
 	_ip_address.resize(16);
 	GetPlayerIp(playerid, _ip_address.data(), 16);
@@ -132,7 +133,7 @@ void CPlayer::GiveMoney(int money, bool give, bool update)
 			stmt->Bind<2>(player->AccountId());
 			stmt->Step();
 		}, 
-		[](uv_work_t* h, int status) {
+		[](uv_work_t* h, int /*status*/) {
 			delete h;
 		});
 	}
@@ -158,7 +159,7 @@ void CPlayer::SetMoney(int money, bool give, bool update)
 			stmt->Bind<2>(player->AccountId());
 			stmt->Step();
 		},
-		[](uv_work_t* h, int status) {
+		[](uv_work_t* h, int /*status*/) {
 			delete h;
 		});
 	}

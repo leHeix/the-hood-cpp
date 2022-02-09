@@ -203,7 +203,7 @@ namespace server
 		void Update(CPlayer* player);
 	public:
 		TextDraw() = default;
-		~TextDraw();
+		~TextDraw() override;
 
 		void PushState();
 		void PopState();
@@ -227,7 +227,7 @@ namespace server
 		explicit PlayerTextDraw(std::uint16_t player)
 			: _playerid(player)
 		{}
-		~PlayerTextDraw();
+		~PlayerTextDraw() override;
 
 		void Show();
 		void Hide();

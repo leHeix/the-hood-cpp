@@ -4,9 +4,7 @@ class command;
 
 namespace commands
 {
-	cell OnPlayerCommandText(std::uint16_t playerid, std::string cmdtext);
 	extern std::unique_ptr<std::unordered_map<std::string, command*>> _commands;
-
 	constexpr inline std::chrono::milliseconds time_between_commands = std::chrono::milliseconds{ 1000 };
 }
 
@@ -14,8 +12,6 @@ namespace cmd = commands;
 
 class command
 {
-	friend cell commands::OnPlayerCommandText(std::uint16_t playerid, std::string cmdtext);
-
 public:
 	enum flags : std::int32_t
 	{
@@ -24,7 +20,7 @@ public:
 
 		max_flag
 	};
-	static_assert((int)flags::max_flag < 16777216 + 1);
+	static_assert(static_cast<int>(flags::max_flag) < 16777216 + 1);
 	template<std::uint8_t Rank> static inline constexpr flags make_flag = static_cast<flags>(Rank << 24);
 
 private:
@@ -68,13 +64,13 @@ public:
 	}
 
 	command(const std::string_view name, flags flags, std::function<void(CPlayer*, commands::argument_store)> fun)
-		: exec(fun), _flags(flags)
+		: _flags(flags), exec(fun)
 	{
 		Register(name);
 	}
 
 	command(const std::string_view name, flags flags, std::initializer_list<const std::string_view> aliases, std::function<void(CPlayer*, commands::argument_store)> fun)
-		: exec(fun), _flags(flags)
+		: _flags(flags), exec(fun)
 	{
 		Register(name);
 
@@ -88,7 +84,7 @@ public:
 	}
 
 	command(const std::string_view name, std::initializer_list<const std::string_view> aliases, flags flags, std::function<void(CPlayer*, commands::argument_store)> fun)
-		: exec(fun), _flags(flags)
+		: _flags(flags), exec(fun)
 	{
 		Register(name);
 
@@ -100,4 +96,6 @@ public:
 			std::cout << "[Commands] Registered alias " << std::quoted(alias_lowered) << " to " << std::quoted(name) << std::endl;
 		}
 	}
+
+	IO_GETTER_SETTER(Flags, _flags)
 };

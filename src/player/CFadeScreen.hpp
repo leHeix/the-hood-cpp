@@ -15,6 +15,7 @@ public:
 	~CFadeScreen();
 
 	void Fade(unsigned char callback_alpha, std::function<void()> callback);
+	void Fade(unsigned char callback_alpha, bool in, std::function<void()> callback);
 	void Stop();
 	void Pause();
 	void Resume();

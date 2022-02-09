@@ -1,4 +1,6 @@
-#include "../../main.hpp"
+#include "../../../main.hpp"
+
+// - Areas
 
 cell streamer::CreateDynamicCircle(float x, float y, float size, int worldid, int interiorid, int playerid, int priority)
 {
@@ -16,6 +18,18 @@ cell streamer::CreateDynamicSphere(float x, float y, float z, float size, int wo
 {
 	static AMX_NATIVE native = sampgdk::FindNative("CreateDynamicSphere");
 	return sampgdk::InvokeNative(native, "ffffiii", x, y, z, size, worldid, interiorid, playerid);
+}
+
+int streamer::CreateDynamicRectangle(float minx, float miny, float maxx, float maxy, int worldid, int interiorid, int playerid, int priority)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("CreateDynamicRectangle");
+	return sampgdk::InvokeNative(native, "ffffiiii", minx, miny, maxx, maxy, worldid ,interiorid, playerid, priority);
+}
+
+int streamer::DestroyDynamicArea(int areaid)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("DestroyDynamicArea");
+	return sampgdk::InvokeNative(native, "i", areaid);
 }
 
 cell streamer::GetPlayerNumberDynamicAreas(int playerid)
@@ -38,6 +52,8 @@ std::vector<int> streamer::GetPlayerDynamicAreas(int playerid)
 
 	return areas;
 }
+
+// - TextLabels
 
 cell streamer::CreateDynamic3DTextLabel(const std::string& text, int color, float x, float y, float z, float drawdistance, int attachedplayer, int attachedvehicle, bool testlos, int worldid, int interiorid, int playerid, float streamdistance, int areaid, int priority)
 {
@@ -72,6 +88,8 @@ cell streamer::UpdateDynamic3DTextLabelText(cell id, int color, const std::strin
 	return sampgdk::InvokeNative(native, "iis", id, color, text.c_str());
 }
 
+// - Pickups
+
 cell streamer::CreateDynamicPickup(int modelid, int type, float x, float y, float z, int worldid, int interiorid, int playerid, float streamdistance, int areaid, int priority)
 {
 	static AMX_NATIVE native = sampgdk::FindNative("CreateDynamicPickup");
@@ -90,6 +108,8 @@ bool streamer::IsValidDynamicPickup(cell pickupid)
 	return sampgdk::InvokeNative(native, "i", pickupid);
 }
 
+// - Actors
+
 int streamer::CreateDynamicActor(int modelid, float x, float y, float z, float r, bool invulnerable, float health, int worldid, int interiorid, int playerid, float streamdistance, int areaid, int priority)
 {
 	static AMX_NATIVE native = sampgdk::FindNative("CreateDynamicActor");
@@ -101,6 +121,14 @@ int streamer::DestroyDynamicActor(int actorid)
 	static AMX_NATIVE native = sampgdk::FindNative("DestroyDynamicActor");
 	return sampgdk::InvokeNative(native, "i", actorid);
 }
+
+int streamer::ApplyDynamicActorAnimation(int actorid, const std::string_view animlib, const std::string_view animname, float fdelta, bool loop, int lockx, int locky, int freeze, int time)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("ApplyDynamicActorAnimation");
+	return sampgdk::InvokeNative(native, "issfbiiii", actorid, animlib.data(), animname.data(), fdelta, loop, lockx, locky, freeze, time);
+}
+
+// - Map Icons
 
 int streamer::CreateDynamicMapIcon(float x, float y, float z, int type, uint32_t color, int worldid, int interiorid, int playerid, float streamdistance, int style, int areaid, int priority)
 {
@@ -119,6 +147,92 @@ bool streamer::IsValidDynamicMapIcon(int iconid)
 	static AMX_NATIVE native = sampgdk::FindNative("IsValidDynamicMapIcon");
 	return !!sampgdk::InvokeNative(native, "i", iconid);
 }
+
+// - Objects
+
+int streamer::CreateDynamicObject(int modelid, float x, float y, float z, float rx, float ry, float rz, int worldid, int interiorid, int playerid, float streamdistance, float drawdistance, int areaid, int priority)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("CreateDynamicObject");
+	return sampgdk::InvokeNative(native, "iffffffiiiffii", modelid, x, y, z, rx, ry, rz, worldid, interiorid, playerid, streamdistance, drawdistance, areaid, priority);
+}
+
+int streamer::DestroyDynamicObject(int objectid)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("DestroyDynamicObject");
+	return sampgdk::InvokeNative(native, "i", objectid);
+}
+
+int streamer::SetDynamicObjectMaterial(int objectid, int materialindex, int modelid, const std::string& txdname, const std::string& texturename, int materialcolor)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("SetDynamicObjectMaterial");
+	return sampgdk::InvokeNative(native, "iiissi", objectid, materialindex, modelid, txdname.c_str(), texturename.c_str(), materialcolor);
+}
+
+// - Checkpoints
+
+int streamer::CreateDynamicCP(float x, float y, float z, float size, int worldid, int interiorid, int playerid, float streamdistance, int areaid, int priority)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("CreateDynamicCP");
+	return sampgdk::InvokeNative(native, "ffffiiifii", x, y, z, size, worldid, interiorid, playerid, streamdistance, areaid, priority);
+}
+
+int streamer::DestroyDynamicCP(int checkpointid)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("DestroyDynamicCP");
+	return sampgdk::InvokeNative(native, "i", checkpointid);
+}
+
+bool streamer::IsValidDynamicCP(int checkpointid)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("IsValidDynamicCP");
+	return sampgdk::InvokeNative(native, "i", checkpointid);
+}
+
+int streamer::TogglePlayerDynamicCP(int playerid, int checkpointid, bool toggle)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("TogglePlayerDynamicCP");
+	return sampgdk::InvokeNative(native, "iib", playerid, checkpointid, toggle);
+}
+
+int streamer::TogglePlayerAllDynamicCPs(int playerid, bool toggle)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("TogglePlayerAllDynamicCPs");
+	const cell exceptions[1] = { -1 };
+	return sampgdk::InvokeNative(native, "iba[1]i", playerid, toggle, exceptions, 1);
+}
+
+bool streamer::IsPlayerInDynamicCP(int playerid, int checkpointid)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("IsPlayerInDynamicCP");
+	return sampgdk::InvokeNative(native, "ii", playerid, checkpointid);
+}
+
+int streamer::GetPlayerVisibleDynamicCP(int playerid)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("GetPlayerVisibleDynamicCP");
+	return sampgdk::InvokeNative(native, "i", playerid);
+}
+
+// - Updates
+
+void streamer::ProcessActiveItems()
+{
+	static AMX_NATIVE native = sampgdk::FindNative("Streamer_ProcessActiveItems");
+	sampgdk::InvokeNative(native, "");
+}
+
+bool streamer::Update(int playerid, streamer::types type)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("Streamer_Update");
+	return sampgdk::InvokeNative(native, "ii", playerid, static_cast<int>(type));
+}
+
+bool streamer::UpdateEx(int playerid, float x, float y, float z, int worldid, int interiorid, int type, int compensatedtime, bool freezeplayer)
+{
+	static AMX_NATIVE native = sampgdk::FindNative("Streamer_UpdateEx");
+	return sampgdk::InvokeNative(native, "ifffiiiib", playerid, x, y, z, worldid, interiorid, type, compensatedtime, freezeplayer);
+}
+
 
 // - Data
 

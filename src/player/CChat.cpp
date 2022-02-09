@@ -75,11 +75,12 @@ void CChat::Clear()
 	bs.Write<uint32_t>(1);
 	bs.Write(" ", 1);
 
-	_chatbuffer.assign(chatbuffer_size, chat_message{ 0, " " });
+	_chatbuffer.clear();
 
 	for (size_t i = 0; i < chatbuffer_size; ++i)
 	{
 		net::RakServer->SendRPC(&bs, net::raknet::RPC_ClientMessage, _player->PlayerId());
+		_chatbuffer.push_back(chat_message{ 0, " " });
 	}
 }
 
@@ -187,7 +188,7 @@ void CChat::SendEnvironment(const std::string& env)
 
 void CChat::SendOOC(const std::string& text)
 {
-	std::string final_msg = fmt::format("{{{:X}}}{}{{FFFFFF}}: (( ", (uint32_t)GetPlayerColor(_player->PlayerId()) >> 8, _player->Name());
+	std::string final_msg = fmt::format("{{{:X}}}{}{{FFFFFF}}: (( ", static_cast<std::uint32_t>(GetPlayerColor(_player->PlayerId())) >> 8, _player->Name());
 
 	auto max_length = 128 - final_msg.length() - 3;
 	auto messages = SplitChatMessage(text, max_length);
@@ -232,7 +233,7 @@ static CPublicHook<chat::OnPlayerText> _c_opt("OnPlayerText");
 // - Chat Commands
 using namespace std::string_view_literals;
 
-command me_cmd("me", { "y"sv }, [](CPlayer* player, commands::argument_store args) {
+static command me_cmd("me", { "y"sv }, [](CPlayer* player, commands::argument_store args) {
 	std::string text;
 
 	try
@@ -248,7 +249,7 @@ command me_cmd("me", { "y"sv }, [](CPlayer* player, commands::argument_store arg
 	player->Chat()->SendAction(text);
 });
 
-command do_cmd("do", { "p"sv }, [](CPlayer* player, commands::argument_store args) {
+static command do_cmd("do", { "p"sv }, [](CPlayer* player, commands::argument_store args) {
 	std::string text;
 
 	try
@@ -264,7 +265,7 @@ command do_cmd("do", { "p"sv }, [](CPlayer* player, commands::argument_store arg
 	player->Chat()->SendEnvironment(text);
 });
 
-command ooc_cmd("ooc"sv, { "b"sv }, [](CPlayer* player, commands::argument_store args) {
+static command ooc_cmd("ooc"sv, { "b"sv }, [](CPlayer* player, commands::argument_store args) {
 	std::string text;
 
 	try

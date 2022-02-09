@@ -2,7 +2,7 @@
 
 std::unique_ptr<std::unordered_map<std::string, command*>> commands::_commands;
 
-cell commands::OnPlayerCommandText(std::uint16_t playerid, std::string cmdtext)
+static public_hook _cmd_opct("OnPlayerCommandText", [](std::uint16_t playerid, std::string cmdtext)
 {
 	if (!commands::_commands)
 	{
@@ -22,7 +22,7 @@ cell commands::OnPlayerCommandText(std::uint16_t playerid, std::string cmdtext)
 		{
 			auto* player = server::player_pool[playerid];
 			auto* command = commands::_commands->at(command_name);
-			auto flags = static_cast<uint32_t>(command->_flags);
+			auto flags = static_cast<uint32_t>(command->Flags());
 
 			if ((flags >> 16) > player->Rank())
 				return ~1;
@@ -51,7 +51,7 @@ cell commands::OnPlayerCommandText(std::uint16_t playerid, std::string cmdtext)
 				args = match[2];
 			}
 			
-			argument_store st{ args };
+			cmd::argument_store st{ args };
 			command->exec(server::player_pool[playerid], std::move(st));
 		}
 
@@ -59,42 +59,4 @@ cell commands::OnPlayerCommandText(std::uint16_t playerid, std::string cmdtext)
 	}
 
 	return 1;
-}
-
-static CPublicHook<commands::OnPlayerCommandText> _cmd_opct("OnPlayerCommandText");
-
-/*
-template<typename CharT>
-struct scn::scanner<CharT, CPlayer*> : scn::empty_parser
-{
-	template<typename Context>
-	error scan(CPlayer*& val, Context& ctx)
-	{
-		std::uint16_t playerid;
-		auto r = scn::scan(ctx.range(), "{}", playerid);
-		if (!r)
-		{
-			std::string player_name;
-			auto r = scn::scan(ctx.range(), "{}", player_name);
-			if (!r)
-				return scn::error(scn::error::invalid_scanned_value);
-
-			for (auto&& [id, player] : server::player_pool)
-			{
-				if (player->Name().find(player_name) != std::string::npos)
-				{
-					val = player.get();
-				}
-			}
-		}
-		else
-		{
-			if (server::player_pool.Exists(playerid))
-				val = server::player_pool[playerid];
-		}
-
-		ctx.range() = std::move(r.range());
-		return r.error();
-	}
-};
-*/
+});

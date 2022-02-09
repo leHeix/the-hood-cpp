@@ -1,0 +1,22 @@
+#
+# TextDraw count: 1
+#
+
+## TextDraw 0
+[[textdraws]]
+player = true
+position = [ 324.000000, 410.000000 ]
+text = "_"
+style = 2
+letter_size = [ 0.158333, 1.350000 ]
+line_size = [ 400.000000, 17.000000 ]
+outline = 0
+shadow = 1
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+

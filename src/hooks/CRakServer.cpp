@@ -65,7 +65,7 @@ namespace net
 					if (packet->length != sizeof(stOnFootSyncData) + 1)
 						return 0xFF;
 
-					stOnFootSyncData* data = (stOnFootSyncData*)&packet->data[1];
+					stOnFootSyncData* data = reinterpret_cast<stOnFootSyncData*>(&packet->data[1]);
 					player->Position().x = data->vecPos.X;
 					player->Position().y = data->vecPos.Y;
 					player->Position().z = data->vecPos.Z;

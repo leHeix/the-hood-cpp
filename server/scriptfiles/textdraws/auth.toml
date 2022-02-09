@@ -356,7 +356,7 @@ selectable = 0
 
 [[textdraws]]
 position = [ 5.500000, 370.500000 ]
-text = "~w~Discord de Mong Servers: ~y~rakmong.com/mong-servers~n~~w~Discord de RakMong: ~y~rakmong.com/discord~n~~w~Foro de RakMong: ~y~forum.rakmong.com"
+text = "~w~Discord de The Hood: ~y~discord.gg/placeholder"
 style = 2
 letter_size = [ 0.149990, 0.949996 ]
 line_size = [ 400.000000, 272.500000 ]

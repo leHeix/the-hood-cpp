@@ -1,0 +1,99 @@
+#
+# TextDraw count: 5
+#
+
+## TextDraw 0
+[[textdraws]]
+position = [ 319.000000, 377.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 0.700003 ]
+line_size = [ 298.500000, 118.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = 168430335
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 1
+[[textdraws]]
+position = [ 300.000000, 367.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 37.000000, 42.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 255
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 2252
+rotation = [ -103.000000, 5.000000, -42.000000 ]
+zoom = 0.790000
+model_colors = [ 1, 1 ]
+
+## TextDraw 2
+[[textdraws]]
+position = [ 300.000000, 367.000000 ]
+text = "Preview_Model"
+style = 5
+letter_size = [ 0.600000, 2.000000 ]
+line_size = [ 37.000000, 42.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = 255
+bg_color = 0
+box_color = 255
+box = 0
+proportional = 1
+selectable = 0
+modelid = 2252
+rotation = [ -103.000000, 5.000000, -16.000000 ]
+zoom = 0.790000
+model_colors = [ 1, 1 ]
+
+## TextDraw 3
+[[textdraws]]
+player = true
+position = [ 319.200012, 379.000000 ]
+text = "_"
+style = 1
+letter_size = [ 0.600000, 0.270000 ]
+line_size = [ 298.500000, 115.000000 ]
+outline = 1
+shadow = 0
+alignment = 2
+letter_color = -1
+bg_color = 255
+box_color = -623191347
+box = 1
+proportional = 1
+selectable = 0
+
+## TextDraw 4
+[[textdraws]]
+player = true
+position = [ 319.600006, 372.000000 ]
+text = "Y"
+style = 2
+letter_size = [ 0.308333, 1.550000 ]
+line_size = [ 400.000000, 17.000000 ]
+outline = 0
+shadow = 0
+alignment = 2
+letter_color = -1094795521
+bg_color = 255
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+

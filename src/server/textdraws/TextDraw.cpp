@@ -242,7 +242,7 @@ void server::TextDraw::Hide()
 
 server::TextDraw* server::TextDraw::SetText(std::string text)
 {
-	_data.text = text;
+	_data.text = std::move(text);
 	std::for_each(_data.text.begin(), _data.text.end(), [](char& c) {
 		switch (c)
 		{
@@ -538,7 +538,7 @@ void server::PlayerTextDraw::Update()
 
 server::PlayerTextDraw* server::PlayerTextDraw::SetText(std::string text)
 {
-	_data.text = text;
+	_data.text = std::move(text);
 	std::for_each(_data.text.begin(), _data.text.end(), [](char& c) {
 		switch (c)
 		{

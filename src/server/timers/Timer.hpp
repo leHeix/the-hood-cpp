@@ -42,6 +42,7 @@ namespace timers
 		CTimer* Repeat(unsigned delay_once, unsigned delay_repeat, std::function<void(CTimer*)> callback);
 		
 		CTimer* Once(CPlayer* player, unsigned delay, std::function<void(CTimer*, CPlayer*)> callback);
+		CTimer* Repeat(CPlayer* player, unsigned delay_once, unsigned delay_repeat, std::function<void(CTimer*, CPlayer*)> callback);
 
 		template<class... Args>
 		CTimer* Repeat(CPlayer* player, unsigned delay_once, unsigned delay_repeat, void(*callback)(CTimer*, CPlayer*, Args...), Args... args)
@@ -63,6 +64,7 @@ namespace timers
 		}
 
 		void Delete(unsigned id);
+		void Delete(CTimer* timer);
 
 		inline bool Exists(unsigned id) { return _timers.contains(id) && !_timers[id]->Killed(); }
 	};

@@ -6,7 +6,7 @@ namespace auth
 	constexpr auto PLAYER_STARTING_MONEY = 250;
 
 	constexpr unsigned short skins[] = {
-		(unsigned short)-1,
+		0,
 
 		/* Edad: 18 - 34 */
 		19, 4, 7, 20, 21,			// Hombres
