@@ -46,7 +46,6 @@ namespace player
 class CPlayer
 {
 public:
-	static constexpr inline auto MAX_PLAYER_VEHICLES = 2;
 	using dialog_callback_t = std::function<void(CPlayer*, bool, unsigned char, std::string)>;
 
 private:
@@ -54,6 +53,7 @@ private:
 	unsigned int _account_id{ 0U };
 	int _money{ 0 };
 	std::uint16_t _paused_time{ 0u };
+	std::chrono::steady_clock::time_point _last_update_tick;
 
 	// Managers
 	std::unique_ptr<CFadeScreen> _fadescreen;
@@ -128,6 +128,10 @@ public:
 	void StopShopping();
 	void PutInVehicle(CVehicle* vehicle, std::uint8_t seatid);
 	CVehicle* GetCurrentVehicle() const;
+	inline bool Paused() const
+	{
+		return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _last_update_tick) < std::chrono::milliseconds{ 1500 };
+	}
 
 	// Dialogs
 	void ShowDialog(unsigned char style, const std::string_view caption, const std::string_view info, const std::string_view button1, const std::string_view button2, std::optional<dialog_callback_t> callback = std::nullopt);
@@ -169,6 +173,7 @@ public:
 	IO_GETTER_SETTER(LastCommandTick, _last_command)
 	IO_GETTER_SETTER(Job, _job.current_job)
 	IO_GETTER_SETTER(JobData, _job)
+	IO_GETTER_SETTER(LastUpdateTick, _last_update_tick)
 
 	// Custom data manipulation
 	template<class T>

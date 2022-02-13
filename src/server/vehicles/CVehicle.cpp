@@ -328,20 +328,25 @@ static public_hook _v_opsc("OnPlayerStateChange", [](std::uint16_t playerid, int
 
 	if (newstate == PLAYER_STATE_DRIVER)
 	{
-		player->Needs()->HideBars();
+		auto& vehicle = vehicles::vehicle_pool[GetPlayerVehicleID(playerid)];
 
-		if (vehicles::vehicle_pool[GetPlayerVehicleID(playerid)]->Engine() == CVehicle::engine_state::off)
+		player->Needs()->HideBars();
+		player->Vehicles()->Speedometer()->Show(vehicle.get());
+
+		if (vehicle->Engine() == CVehicle::engine_state::off)
 		{
 			player->Notifications()->ShowBeatingText(5000, 0xED2B2B, { 100, 255 }, "Presiona ~k~~CONVERSATION_NO~ para encender el vehículo");
 		}
 	}
 	else if (oldstate == PLAYER_STATE_DRIVER)
 	{
+		player->Vehicles()->Speedometer()->Hide();
 		player->Needs()->ShowBars();
 	}
 	
 	return 1;
 });
+
 static public_hook _v_opksc("OnPlayerKeyStateChange", [](std::uint16_t playerid, int newkeys, int oldkeys) {
 	if (GetPlayerState(playerid) == PLAYER_STATE_DRIVER)
 	{

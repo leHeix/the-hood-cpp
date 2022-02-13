@@ -1,5 +1,10 @@
 #include "../../main.hpp"
 
+CPlayerVehicleManager::CPlayerVehicleManager(CPlayer* player)
+	: _player(player), _speedometer(std::make_unique<CSpeedometer>(_player))
+{
+}
+
 void CPlayerVehicleManager::Load()
 {
 	std::thread([this] {
@@ -83,3 +88,28 @@ bool CPlayerVehicleManager::Register(CVehicle* vehicle)
 
 	return false;
 }
+
+static command rvtpcommand("registervehicle", { "rvp" }, [](CPlayer* player, cmd::argument_store args) {
+	CVehicle* vehicle;
+	CPlayer* destination;
+
+	try
+	{
+		args >> vehicle;
+		args >> destination;
+	}
+	catch (const std::exception& e)
+	{
+		player->Chat()->Send(0xDADADAFF, "USO: {ED2B2B}/registervehicle {DADADA}<vehículo> <jugador>");
+		return;
+	}
+
+	if (!destination->Vehicles()->Register(vehicle))
+	{
+		player->Chat()->Send(0xED2B2BFF, "[ERROR] {DADADA}No se puedo registrar el vehículo en la base de datos.");
+		return;
+	}
+	
+	player->Chat()->Send(0xDADADAFF, "Se añadió un {{ED2B2B}}{}{{DADADA}} (ID {{ED2B2B}}{}{{DADADA}}) a la cuenta de {{ED2B2B}}{}{{DADADA}}.", vehicles::names[vehicle->GetModel() - 400], vehicle->ID(), destination->Name());
+	destination->Chat()->Send(0xDADADAFF, "El administrador {{ED2B2B}}{}{{DADADA}} agregó un {{ED2B2B}}{}{{DADADA}} a tu cuenta.", player->Name(), vehicles::names[vehicle->GetModel() - 400]);
+});

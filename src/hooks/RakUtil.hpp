@@ -484,5 +484,13 @@ namespace net
 		float fSpeed[3];
 		float fTurnSpeed[3];
 	};
+
+	struct stSpectatingSyncData
+	{
+		uint16_t wLeftRightKeys;
+		uint16_t wUpDownKeys;
+		uint16_t wKeys;
+		float fPosition[3];
+	};
 #pragma pack(pop)
 }

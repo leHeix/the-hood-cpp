@@ -97,8 +97,16 @@
 #undef MAX_PLAYERS
 #define MAX_PLAYERS 150
 using Random = effolkronium::random_static;
-#ifndef _WIN32
+#ifdef _WIN32
+	#ifndef FASTCALL
+		#define FASTCALL __fastcall
+	#endif
+#else
 	using SOCKET = uintptr_t;
+
+	#ifndef FASTCALL
+		#define FASTCALL __attribute__((fastcall))
+	#endif
 #endif
 
 
