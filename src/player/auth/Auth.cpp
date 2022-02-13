@@ -357,19 +357,19 @@ namespace auth
 		server::player_pool[playerid]->Flags().set(player::flags::authenticating, true);
 
 		const auto screen_blacked = [=]() {
-			server::player_pool[playerid]->FadeScreen()->Pause();
+			auto* player = server::player_pool[playerid];
 			
 			static const std::regex name_regex(".*");
 
 			if (!std::regex_match(server::player_pool[playerid]->Name(), name_regex))
 			{
-				server::player_pool[playerid]->ShowDialog(DIALOG_STYLE_MSGBOX,
+				player->ShowDialog(DIALOG_STYLE_MSGBOX,
 					"{DADADA}Nombre {ED2B2B}inválido",
 					"{DADADA}Tu cuenta no puede ser registrada con un nombre inválido. Para entrar al servidor, tu nombre debe seguir el siguiente patrón:\n\n\t\"Nombre_Apellido\"",
 					"Entendido", ""
 				);
 
-				timers::timer_manager->Once(150, [=](timers::CTimer* timer) {
+				timers::timer_manager->Once(150, [playerid](timers::CTimer* timer) {
 					Kick(playerid);
 				});
 
@@ -390,43 +390,49 @@ namespace auth
 				"LIMIT 1;"
 			);
 
-			stmt->Bind<1>(server::player_pool[playerid]->Name());
+			stmt->Bind<1>(player->Name());
 
 			stmt->Step();
 
 			if (stmt->HasRow())
 			{
-				server::player_pool[playerid]->Flags().set(player::flags::registered, true);
+				player->Flags().set(player::flags::registered, true);
 
 				auto row = stmt->Row();
-				server::player_pool[playerid]->AccountId() = *row->Get<int>("ID");
-				server::player_pool[playerid]->Password() = *row->Get<std::string>("PASSWORD");
-				server::player_pool[playerid]->Sex() = *row->Get<bool>("SEX");
-				server::player_pool[playerid]->Age() = *row->Get<unsigned char>("AGE");
-				server::player_pool[playerid]->SetMoney(*row->Get<int>("MONEY"), false, false);
-				server::player_pool[playerid]->Health() = *row->Get<float>("HEALTH");
-				server::player_pool[playerid]->Armor() = *row->Get<float>("ARMOUR");
-				server::player_pool[playerid]->Position() = glm::vec4{
+				player->AccountId() = *row->Get<int>("ID");
+				player->Password() = *row->Get<std::string>("PASSWORD");
+				player->Sex() = *row->Get<bool>("SEX");
+				player->Age() = *row->Get<unsigned char>("AGE");
+				player->SetMoney(*row->Get<int>("MONEY"), false, false);
+				player->Health() = *row->Get<float>("HEALTH");
+				player->Armor() = *row->Get<float>("ARMOUR");
+				player->Position() = glm::vec4{
 					*row->Get<float>("POS_X"),
 					*row->Get<float>("POS_Y"),
 					*row->Get<float>("POS_Z"),
 					*row->Get<float>("ANGLE")
 				};
-				server::player_pool[playerid]->VirtualWorld() = *row->Get<int>("VW");
-				server::player_pool[playerid]->Interior() = *row->Get<int>("INTERIOR");
-				server::player_pool[playerid]->LastConnection() = *row->Get<std::string>("LAST_CONNECTION");
-				server::player_pool[playerid]->Skin() = *row->Get<int>("SKIN");
-				server::player_pool[playerid]->Needs()->SetHunger(*row->Get<float>("HUNGER"));
-				server::player_pool[playerid]->Needs()->SetThirst(*row->Get<float>("THIRST"));
-				server::player_pool[playerid]->Rank() = static_cast<player::rank>(*row->Get<unsigned char>("ADMIN"));
-				server::player_pool[playerid]->PlayedTime() = *row->Get<int>("PLAYED_TIME");
-				server::player_pool[playerid]->PhoneNumber() = *row->Get<int>("PHONE_NUMBER");
+				player->VirtualWorld() = *row->Get<int>("VW");
+				player->Interior() = *row->Get<int>("INTERIOR");
+				player->LastConnection() = *row->Get<std::string>("LAST_CONNECTION");
+				player->Skin() = *row->Get<int>("SKIN");
+				player->Needs()->SetHunger(*row->Get<float>("HUNGER"));
+				player->Needs()->SetThirst(*row->Get<float>("THIRST"));
+				player->Rank() = static_cast<player::rank>(*row->Get<unsigned char>("ADMIN"));
+				player->PlayedTime() = *row->Get<int>("PLAYED_TIME");
+				player->PhoneNumber() = *row->Get<int>("PHONE_NUMBER");
 
 				// load weapon slots
 				
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[1]->SetText(server::player_pool[playerid]->Name());
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[2]->SetText("Tu contraseña");
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[3]->SetText("Mostrar contraseña");
+				{
+					auto ctime_stmt = server::database->Prepare("UPDATE `PLAYERS` SET `CURRENT_CONNECTION` = strftime('%s', 'now') WHERE `ID` = ?;");
+					ctime_stmt->Bind<1>(player->AccountId());
+					ctime_stmt->Step();
+				}
+
+				textdraws->GetPlayerTextDraws(player)[1]->SetText(player->Name());
+				textdraws->GetPlayerTextDraws(player)[2]->SetText("Tu contraseña");
+				textdraws->GetPlayerTextDraws(player)[3]->SetText("Mostrar contraseña");
 
 				global[7]->PushState();
 				global[19]->PushState();
@@ -448,26 +454,25 @@ namespace auth
 
 				global[19]->PopState();
 
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[0]->SetText(fmt::format("Último inicio de sesión: ~y~{}", server::player_pool[playerid]->LastConnection()));
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[1]->SetText(server::player_pool[playerid]->Name());
+				textdraws->GetPlayerTextDraws(player)[0]->SetText(fmt::format("Último inicio de sesión: ~y~{}", player->LastConnection()));
+				textdraws->GetPlayerTextDraws(player)[1]->SetText(player->Name());
 
-				for (size_t i = 0, count = textdraws->GetPlayerTextDraws(server::player_pool[playerid]).size() - 2; i <= count; ++i)
-					textdraws->GetPlayerTextDraws(server::player_pool[playerid])[i]->Show();
+				for (size_t i = 0, count = textdraws->GetPlayerTextDraws(player).size() - 2; i <= count; ++i)
+					textdraws->GetPlayerTextDraws(player)[i]->Show();
 			}
 			else
 			{
 				SetPlayerCameraPos(playerid, 1585.296142, -2566.993652, 13.769470);
 				SetPlayerCameraLookAt(playerid, 1580.729736, -2568.970458, 14.259890, CAMERA_CUT);
 
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[1]->SetText(server::player_pool[playerid]->Name());
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[2]->SetText("Tu contraseña");
-				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[3]->SetText("Mostrar contraseña");
+				textdraws->GetPlayerTextDraws(player)[1]->SetText(player->Name());
+				textdraws->GetPlayerTextDraws(player)[2]->SetText("Tu contraseña");
+				textdraws->GetPlayerTextDraws(player)[3]->SetText("Mostrar contraseña");
 
-				textdraws->Show(server::player_pool[playerid], 0, -1, 1, -1);
+				textdraws->Show(player, 0, -1, 1, -1);
 			}
 
 			SelectTextDraw(playerid, 0xD2B567FF);
-			server::player_pool[playerid]->FadeScreen()->Resume();
 		};
 
 		server::player_pool[playerid]->FadeScreen()->Fade(255, screen_blacked);

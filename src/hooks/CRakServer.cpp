@@ -117,12 +117,18 @@ namespace net
 		if (server::player_pool.Exists(playerid))
 		{
 			auto* player = server::player_pool[playerid];
+
 			switch (packetid)
 			{
 				case net::raknet::ID_PLAYER_SYNC:
 				{
 					if (packet->length >= sizeof(stOnFootSyncData) + 1)
 						return nullptr;
+
+					if (player->Paused())
+					{
+						player->PausedTime() += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - player->LastUpdateTick()).count();
+					}
 
 					player->LastUpdateTick() = std::chrono::steady_clock::now();
 
@@ -139,6 +145,11 @@ namespace net
 					if (packet->length >= sizeof(stVehicleSyncData) + 1)
 						return nullptr;
 
+					if (player->Paused())
+					{
+						player->PausedTime() += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - player->LastUpdateTick()).count();
+					}
+
 					player->LastUpdateTick() = std::chrono::steady_clock::now();
 					break;
 				}
@@ -146,6 +157,11 @@ namespace net
 				{
 					if (packet->length >= sizeof(stPassengerSyncData) + 1)
 						return nullptr;
+
+					if (player->Paused())
+					{
+						player->PausedTime() += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - player->LastUpdateTick()).count();
+					}
 
 					player->LastUpdateTick() = std::chrono::steady_clock::now();
 					break;
@@ -155,6 +171,11 @@ namespace net
 					if (packet->length >= sizeof(stSpectatingSyncData) + 1)
 						return nullptr;
 
+					if (player->Paused())
+					{
+						player->PausedTime() += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - player->LastUpdateTick()).count();
+					}
+
 					player->LastUpdateTick() = std::chrono::steady_clock::now();
 					break;
 				}
@@ -163,6 +184,11 @@ namespace net
 					if (packet->length >= sizeof(stAimSyncData) + 1)
 						return nullptr;
 
+					if (player->Paused())
+					{
+						player->PausedTime() += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - player->LastUpdateTick()).count();
+					}
+
 					player->LastUpdateTick() = std::chrono::steady_clock::now();
 					break;
 				}
@@ -170,6 +196,11 @@ namespace net
 				{
 					if (packet->length >= sizeof(stTrailerSyncData) + 1)
 						return nullptr;
+
+					if (player->Paused())
+					{
+						player->PausedTime() += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - player->LastUpdateTick()).count();
+					}
 
 					player->LastUpdateTick() = std::chrono::steady_clock::now();
 					break;

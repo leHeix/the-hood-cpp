@@ -37,9 +37,9 @@ void CPlayer::RegisterConnection()
 		data* thread_data = static_cast<data*>(worker->data);
 		auto stmt = server::database->Prepare(
 			"INSERT INTO `CONNECTION_LOGS` "
-			"(ACCOUNT_ID, IP_ADDRESS) "
+				"(ACCOUNT_ID, IP_ADDRESS) "
 			"VALUES "
-			"(?, ?);"
+				"(?, ?);"
 		);
 
 		stmt->Bind<1>(thread_data->account_id);
@@ -94,20 +94,20 @@ void CPlayer::SetPosition(const glm::vec3& pos)
 	_position.x = pos.x;
 	_position.y = pos.y;
 	_position.z = pos.z;
-	SetPlayerPos(_playerid, pos.x, pos.y, pos.z);
+	SetPlayerPos(_playerid, _position.x, _position.y, _position.z);
 }
 
 void CPlayer::SetPosition(const glm::vec4& pos)
 {
 	_position = pos;
-	SetPlayerPos(_playerid, pos.x, pos.y, pos.z);
-	SetPlayerFacingAngle(_playerid, pos.w);
+	SetPlayerPos(_playerid, _position.x, _position.y, _position.z);
+	SetPlayerFacingAngle(_playerid, _position.w);
 }
 
 void CPlayer::SetFacingAngle(float angle)
 {
 	_position.w = angle;
-	SetPlayerFacingAngle(_playerid, angle);
+	SetPlayerFacingAngle(_playerid, _position.w);
 }
 
 void CPlayer::StopShopping()
@@ -135,7 +135,7 @@ void CPlayer::PutInVehicle(CVehicle* vehicle, std::uint8_t seat)
 
 CVehicle* CPlayer::GetCurrentVehicle() const
 {
-	std::size_t id = GetPlayerVehicleID(_playerid);
+	std::uint16_t id = GetPlayerVehicleID(_playerid);
 	if (!id || id == INVALID_VEHICLE_ID)
 		return nullptr;
 
