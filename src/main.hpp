@@ -111,6 +111,7 @@ using Random = effolkronium::random_static;
 #include "Utils.hpp"
 
 class CPlayer;
+class CVehicle;
 
 #include "hooks/RakUtil.hpp"
 #include "hooks/CRakServer.hpp"
@@ -137,6 +138,7 @@ class CPlayer;
 #include "player/Needs.hpp"
 #include "player/KeyGame.hpp"
 #include "player/auth/Auth.hpp"
+#include "player/CSpeedometer.hpp"
 #include "player/CPlayer.hpp"
 #include "player/CPlayerPool.hpp"
 #include "player/jobs/Jobs.hpp"

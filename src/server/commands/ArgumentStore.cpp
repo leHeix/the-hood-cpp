@@ -142,3 +142,59 @@ commands::argument_store& commands::argument_store::operator>>(CPlayer*& data)
 	data = nullptr;
 	return *this;
 }
+
+commands::argument_store& commands::argument_store::operator>>(vehicles::stModel& data)
+{
+	std::string chunk = GetNextChunk();
+
+	std::uint16_t modelid{};
+	auto [ptr, ec] { std::from_chars(chunk.data(), chunk.data() + chunk.size(), modelid)};
+	if (ec == std::errc{})
+	{
+		if (modelid < 400 || modelid > 611)
+		{
+			throw type_error{ "vehicle model", "invalid vehicle model" };
+		}
+
+		data.id = modelid;
+		data.name = vehicles::names[modelid - 400];
+	}
+	else
+	{
+		size_t min{ 8 };
+		auto closest = vehicles::names.end();
+
+		for (auto it = vehicles::names.begin(); it != vehicles::names.end(); ++it)
+		{
+			size_t distance = utils::levenshtein(chunk, std::string{ it->begin(), it->end() });
+			if (distance < min)
+			{
+				min = distance;
+				closest = it;
+			}
+		}
+
+		if(closest == vehicles::names.end())
+			throw type_error{ "vehicle model", "invalid vehicle model name" };
+
+		data.id = 400 + std::distance(vehicles::names.begin(), closest);
+		data.name = *closest;
+	}
+
+	return *this;
+}
+
+cmd::argument_store& cmd::argument_store::operator>>(CVehicle*& data)
+{
+	std::string chunk = GetNextChunk();
+
+	std::uint16_t vehicleid{ INVALID_VEHICLE_ID };
+	auto [ptr, ec] { std::from_chars(chunk.data(), chunk.data() + chunk.size(), vehicleid)};
+	if (ec != std::errc{})
+	{
+		throw type_error{ "vehicle", "invalid vehicle ID" };
+	}
+
+	data = vehicles::vehicle_pool[vehicleid].get();
+	return *this;
+}

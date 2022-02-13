@@ -438,6 +438,7 @@ namespace auth
 					global[i]->Show();
 				}
 
+				global[7]->PopState();
 				global[19]->SetText("Iniciar sesión");
 
 				for (size_t i = 18; i < global.size(); ++i)
@@ -445,7 +446,6 @@ namespace auth
 					global[i]->Show();
 				}
 
-				global[7]->PopState();
 				global[19]->PopState();
 
 				textdraws->GetPlayerTextDraws(server::player_pool[playerid])[0]->SetText(fmt::format("Último inicio de sesión: ~y~{}", server::player_pool[playerid]->LastConnection()));

@@ -35,6 +35,7 @@ namespace player
 		void StartUpdating();
 		void StopUpdating();
 		void ShowBars();
+		void HideBars();
 
 		IO_GETTER_SETTER(EatCount, _eat_count)
 		IO_GETTER_SETTER(LastEatTick, _last_eat_tick)

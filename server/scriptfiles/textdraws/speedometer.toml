@@ -1,0 +1,108 @@
+#
+# TextDraw count: 6
+#
+
+## TextDraw 0
+[[textdraws]]
+position = [ 463.000000, 415.000000 ]
+text = "/////////////////////////////////~n~-----------------------------------"
+style = 1
+letter_size = [ 0.284166, 1.500000 ]
+line_size = [ 402.000000, 17.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = 1296911871
+bg_color = 1296911871
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 1
+[[textdraws]]
+position = [ 593.000000, 379.000000 ]
+text = "/"
+style = 1
+letter_size = [ 0.284166, 3.500000 ]
+line_size = [ 402.000000, 17.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = -1
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 2
+[[textdraws]]
+position = [ 603.000000, 381.000000 ]
+text = "KM/H"
+style = 2
+letter_size = [ 0.250833, 1.500000 ]
+line_size = [ 402.000000, 17.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = -1
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 3
+[[textdraws]]
+player = true
+position = [ 463.000000, 415.000000 ]
+text = "////////////~n~------------"
+style = 1
+letter_size = [ 0.284166, 1.500000 ]
+line_size = [ 402.000000, 17.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = -1
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 4
+[[textdraws]]
+player = true
+position = [ 614.000000, 412.000000 ]
+text = "////"
+style = 1
+letter_size = [ 0.284000, 2.849997 ]
+line_size = [ 400.000000, 17.000000 ]
+outline = 1
+shadow = 0
+alignment = 1
+letter_color = -16776961
+bg_color = -16776961
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0
+
+## TextDraw 5
+[[textdraws]]
+player = true
+position = [ 515.000000, 379.000000 ]
+text = "23"
+style = 3
+letter_size = [ 0.500832, 3.500000 ]
+line_size = [ 402.000000, 17.000000 ]
+outline = 0
+shadow = 0
+alignment = 1
+letter_color = -1
+bg_color = -1
+box_color = 50
+box = 0
+proportional = 1
+selectable = 0

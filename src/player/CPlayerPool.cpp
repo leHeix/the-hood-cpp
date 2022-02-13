@@ -16,12 +16,12 @@ void CPlayerPool::Remove(unsigned short id)
 	_players.erase(id);
 }
 
-void CPlayerPool::Remove(const CPlayer* player)
+void CPlayerPool::Remove(CPlayer* player)
 {
 	_players.erase(player->PlayerId());
 }
 
-CPlayer* CPlayerPool::Get(unsigned short id)
+CPlayer* CPlayerPool::Get(unsigned short id) noexcept
 {
 	try
 	{

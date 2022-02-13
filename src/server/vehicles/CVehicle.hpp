@@ -1,14 +1,238 @@
 #pragma once
 
+class CVehicle;
+
 namespace vehicles
 {
-	struct stVehicleModelData
+	struct stModelData
 	{
+		int max_speed;
 		float max_fuel;
 		int price;
 	};
 
-	constexpr inline std::array<stVehicleModelData, 212> model_data{{
+	struct stModel
+	{
+		std::uint16_t id;
+		std::string_view name;
+	};
+
+	constexpr inline const std::array<const std::string_view, 212> names{ {
+		"Landstalker",
+		"Bravura",
+		"Buffalo",
+		"Linerunner",
+		"Pereniel",
+		"Sentinel",
+		"Dumper",
+		"Firetruck",
+		"Trashmaster",
+		"Stretch",
+		"Manana",
+		"Infernus",
+		"Voodoo",
+		"Pony",
+		"Mule",
+		"Cheetah",
+		"Ambulance",
+		"Leviathan",
+		"Moonbeam",
+		"Esperanto",
+		"Taxi",
+		"Washington",
+		"Bobcat",
+		"Mr Whoopee",
+		"BF Injection",
+		"Hunter",
+		"Premier",
+		"Enforcer",
+		"Securicar",
+		"Banshee",
+		"Predator",
+		"Bus",
+		"Rhino",
+		"Barracks",
+		"Hotknife",
+		"Trailer",
+		"Previon",
+		"Coach",
+		"Cabbie",
+		"Stallion",
+		"Rumpo",
+		"RC Bandit",
+		"Romero",
+		"Packer",
+		"Monster",
+		"Admiral",
+		"Squalo",
+		"Seasparrow",
+		"Pizzaboy",
+		"Tram",
+		"Trailer",
+		"Turismo",
+		"Speeder",
+		"Reefer",
+		"Tropic",
+		"Flatbed",
+		"Yankee",
+		"Caddy",
+		"Solair",
+		"Berkley's RC Van",
+		"Skimmer",
+		"PCJ-600",
+		"Faggio",
+		"Freeway",
+		"RC Baron",
+		"RC Raider",
+		"Glendale",
+		"Oceanic",
+		"Sanchez",
+		"Sparrow",
+		"Patriot",
+		"Quad",
+		"Coastguard",
+		"Dinghy",
+		"Hermes",
+		"Sabre",
+		"Rustler",
+		"ZR-350",
+		"Walton",
+		"Regina",
+		"Comet",
+		"BMX",
+		"Burrito",
+		"Camper",
+		"Marquis",
+		"Baggage",
+		"Dozer",
+		"Maverick",
+		"News Chopper",
+		"Rancher",
+		"FBI Rancher",
+		"Virgo",
+		"Greenwood",
+		"Jetmax",
+		"Hotring",
+		"Sandking",
+		"Blista",
+		"Police Maverick",
+		"Boxville",
+		"Benson",
+		"Mesa",
+		"RC Goblin",
+		"Hotring-Racer",
+		"Hotring-Racer",
+		"Bloodring-Banger",
+		"Rancher",
+		"Super-GT",
+		"Elegant",
+		"Journey",
+		"Bike",
+		"Mountain Bike",
+		"Beagle",
+		"Cropdust",
+		"Stunt",
+		"Tanker",
+		"RoadTrain",
+		"Nebula",
+		"Majestic",
+		"Buccaneer",
+		"Shamal",
+		"Hydra",
+		"FCR-900",
+		"NRG-500",
+		"HPV1000",
+		"Cement Truck",
+		"Tow Truck",
+		"Fortune",
+		"Cadrona",
+		"FBI Truck",
+		"Willard",
+		"Forklift",
+		"Tractor",
+		"Combine",
+		"Feltzer",
+		"Remington",
+		"Slamvan",
+		"Blade",
+		"Freight",
+		"Streak",
+		"Vortex",
+		"Vincent",
+		"Bullet",
+		"Clover",
+		"Sadler",
+		"Firetruck",
+		"Hustler",
+		"Intruder",
+		"Primo",
+		"Cargobob",
+		"Tampa",
+		"Sunrise",
+		"Merit",
+		"Utility",
+		"Nevada",
+		"Yosemite",
+		"Windsor",
+		"Monster Truck A",
+		"Monster Truck B",
+		"Uranus",
+		"Jester",
+		"Sultan",
+		"Stratum",
+		"Elegy",
+		"Raindance",
+		"RC Tiger",
+		"Flash",
+		"Tahoma",
+		"Savanna",
+		"Bandito",
+		"Freight",
+		"Trailer",
+		"Kart",
+		"Mower",
+		"Duneride",
+		"Sweeper",
+		"Broadway",
+		"Tornado",
+		"AT-400",
+		"DFT-30",
+		"Huntley",
+		"Stafford",
+		"BF-400",
+		"Newsvan",
+		"Tug",
+		"Trailer",
+		"Emperor",
+		"Wayfarer",
+		"Euros",
+		"Hotdog",
+		"Club",
+		"Trailer",
+		"Trailer",
+		"Andromada",
+		"Dodo",
+		"RC Cam",
+		"Launch",
+		"Police Car",
+		"Police Car",
+		"Police Car",
+		"Police Ranger",
+		"Picador",
+		"S.W.A.T. Van",
+		"Alpha",
+		"Phoenix",
+		"Glendale",
+		"Sadler",
+		"Luggage Trailer",
+		"Luggage Trailer",
+		"Stair Trailer",
+		"Boxville",
+		"Farm Plow",
+		"Utility Trailer"
+	}};
+
+	constexpr inline std::array<stModelData, 212> model_data{{
 		{ 100.0, 0 },           // 400
 		{ 50.0, 0 },            // 401 - Bravura
 		{ 100.0, 0 },
@@ -223,7 +447,35 @@ namespace vehicles
 		{ 100.0, 0 }
 	}};
 
-	std::array<std::unique_ptr<CVehicle>, MAX_VEHICLES> vehicle_pool;
+	extern std::array<std::unique_ptr<CVehicle>, MAX_VEHICLES> vehicle_pool;
+
+	enum params : std::uint8_t
+	{
+		engine = 0,
+		lights,
+		alarm,
+		doors,
+		bonnet,
+		boot,
+		objective
+	};
+
+	/*
+	union vehicle_params
+	{
+		std::uint8_t all;
+		struct
+		{
+			unsigned char engine : 1;
+			unsigned char lights : 1;
+			unsigned char alarm : 1;
+			unsigned char doors : 1;
+			unsigned char bonnet : 1;
+			unsigned char boot : 1;
+			unsigned char objective : 1;
+		};
+	};
+	*/
 }
 
 class CVehicle
@@ -247,7 +499,7 @@ public:
 	};
 
 private:
-	int _vehicleid{ INVALID_VEHICLE_ID };
+	std::uint16_t _vehicleid{ INVALID_VEHICLE_ID };
 	int _dbid{ 0 };
 	CPlayer* _owner{ nullptr };
 
@@ -258,16 +510,17 @@ private:
 	float _health{ 1000.F };
 
 	std::pair<int, int> _color;
-	int _paintjob{ 3 };
+	std::uint8_t _paintjob{ 3 };
 	float _fuel{ 0.F };
 	bool _locked{ false };
 	bool _alarm{ false };
-	std::array<int, 14> _components;
-	int _gearbox{ gearbox::N };
+	std::array<std::uint16_t, 14> _components;
+	std::int8_t _gearbox{ gearbox::N };
 
 	struct
 	{
-		timers::CTimer* update;
+		timers::CTimer* update{ nullptr };
+		timers::CTimer* toggle_engine{ nullptr };
 	} _timers;
 
 	void Update(timers::CTimer* timer);
@@ -278,9 +531,12 @@ private:
 
 public:
 	static inline constexpr float VEHICLE_FUEL_DIVISOR = 20000.F;
+
 	~CVehicle();
 
 	static CVehicle* create(std::uint16_t modelid, glm::vec4 position, std::pair<int, int> color);
+	// This is so niggerish...
+	static void destroy(CVehicle* vehicle);
 
 	inline std::uint16_t ID() const { return _vehicleid; }
 	inline bool Valid() const { return _vehicleid != INVALID_VEHICLE_ID; }
@@ -299,7 +555,47 @@ public:
 	}
 
 	void ToggleEngine(engine_state state = engine_state::default_state);
+	void ToggleEngineByPlayer(CPlayer* player);
 	CPlayer* GetDriver();
 
-	bool RegisterToPlayer(CPlayer* player);
+	IO_GETTER_SETTER(DbId, _dbid)
+	IO_GETTER_SETTER(Owner, _owner)
+	IO_GETTER_SETTER(Components, _components)
+
+	void SetFuel(float fuel);
+	void AddFuel(float fuel);
+	float GetFuel() const;
+
+	void SetHealth(float health);
+	float GetHealth() const;
+	void Repair();
+
+	void SetPosition(glm::vec3 position);
+	void SetPosition(glm::vec4 position);
+	void SetZAngle(float angle);
+	glm::vec4 GetPosition() const;
+
+	void SetColor(std::pair<int, int> color);
+	std::pair<int, int> GetColor() const;
+	
+	void SetPaintjob(std::uint8_t paintjob);
+	std::uint8_t GetPaintjob() const;
+
+	void SetDamageStatus(int panels, int doors, int lights, int tires);
+	std::tuple<int, int, int, int> GetDamageStatus() const;
+
+	void SetInterior(int id);
+	int GetInterior() const;
+
+	void SetVirtualWorld(int worldid);
+	int GetVirtualWorld() const;
+
+	std::tuple<int, int, int, int, int, int, int> GetParams() const;
+	std::bitset<7> GetParamsBitset() const;
+
+	std::uint16_t GetModel() const;
+
+	void Lock();
+	void Unlock();
+	bool Locked() const;
 };

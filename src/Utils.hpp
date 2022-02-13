@@ -76,6 +76,8 @@ namespace utils
 
 		return h;
 	}
+
+	std::size_t levenshtein(std::string s1, std::string s2, bool case_sensitive = false);
 }
 
 constexpr std::uint32_t operator""_hash(const char* s, size_t c)

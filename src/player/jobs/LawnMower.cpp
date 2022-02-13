@@ -65,11 +65,11 @@ static bool LawnmowerEvent(CPlayer* player, jobs::event event, int area)
 			TogglePlayerControllable(*player, false);
 			
 			player->FadeScreen()->Fade(255, [player, area] {
-				std::uint16_t lawnmower = CreateVehicle(572, 2052.7703, -1242.6202, 23.6974, 85.6861, -1, -1, -1, false);
-				SetVehicleParamsEx(lawnmower, 1, 0, 0, 0, 0, 0, 0);
-				PutPlayerInVehicle(*player, lawnmower, 0);
+				CVehicle* lawnmower = CVehicle::create(572, { 2052.7703, -1242.6202, 23.6974, 85.6861 }, { -1, -1 });
+				lawnmower->ToggleEngine(CVehicle::engine_state::on);
+				player->PutInVehicle(lawnmower, 0);
 
-				player->SetData<uint16_t>("lawnmower:vehicle", lawnmower);
+				player->SetData<CVehicle*>("lawnmower:vehicle", lawnmower);
 
 				_player_park[player->PlayerId()] = area;
 				_lawnmower_areas[area].using_player = player;
@@ -92,8 +92,10 @@ static bool LawnmowerEvent(CPlayer* player, jobs::event event, int area)
 			player->FadeScreen()->Fade(255, [player]() {
 				StopAudioStreamForPlayer(*player);
 
-				DestroyVehicle(player->GetData<uint16_t>("lawnmower:vehicle").value_or(INVALID_VEHICLE_ID));
+				auto* lawnmower = player->GetData<CVehicle*>("lawnmower:vehicle").value_or(nullptr);
 				player->RemoveData("lawnmower:vehicle");
+				CVehicle::destroy(lawnmower);
+
 				player->SetPosition(_lawnmower_areas[_player_park[*player]].positions.spawn);
 
 				auto& area = _lawnmower_areas[_player_park[player->PlayerId()]];
@@ -123,7 +125,7 @@ public_hook j_lm_opd("OnPlayerDisconnect", +[](std::uint16_t playerid, std::uint
 	auto* player = server::player_pool[playerid];
 	if (player->HasData("lawnmower:vehicle"))
 	{
-		DestroyVehicle(player->GetData<uint16_t>("lawnmower:vehicle").value_or(INVALID_VEHICLE_ID));
+		CVehicle::destroy(player->GetData<CVehicle*>("lawnmower:vehicle").value_or(nullptr));
 	}
 
 	if (_player_park[playerid] != -1)
@@ -173,7 +175,7 @@ static public_hook j_lm_opeedm("OnPlayerExitDynamicArea", +[](std::uint16_t play
 			player->FadeScreen()->Fade(255, [player]() {
 				if (player->HasData("lawnmower:vehicle"))
 				{
-					DestroyVehicle(player->GetData<uint16_t>("lawnmower:vehicle").value_or(INVALID_VEHICLE_ID));
+					CVehicle::destroy(player->GetData<CVehicle*>("lawnmower:vehicle").value_or(nullptr));
 					player->RemoveData("lawnmower:vehicle");
 				}
 
@@ -233,10 +235,12 @@ static public_hook _j_lm_opeda("OnPlayerEnterDynamicArea", +[](std::uint16_t pla
 			TogglePlayerControllable(playerid, false);
 
 			server::player_pool[playerid]->FadeScreen()->Fade(255, [playerid]() {
+				auto* player = server::player_pool[playerid];
+
 				StopAudioStreamForPlayer(playerid);
-				server::player_pool[playerid]->Job() = player::job::none;
-				DestroyVehicle(GetPlayerVehicleID(playerid));
-				server::player_pool[playerid]->SetPosition({ 2052.7703, -1242.6202, 23.6974 });
+				player->Job() = player::job::none;
+				CVehicle::destroy(player->GetCurrentVehicle());
+				player->SetPosition({ 2052.7703, -1242.6202, 23.6974 });
 
 				server::player_pool[playerid]->FadeScreen()->Fade(100, false, [playerid]() {
 					TogglePlayerControllable(playerid, true);

@@ -6,7 +6,9 @@ CPlayer::CPlayer(std::uint16_t playerid)
 		_notifications(std::make_unique<player::CNotificationManager>(this)),
 		_needs(std::make_unique<player::CNeedsManager>(this)),
 		_chat(std::make_unique<CChat>(this)),
-		_keygame(std::make_unique<CKeyGame>(this))
+		_keygame(std::make_unique<CKeyGame>(this)),
+		_vehicles(std::make_unique<CPlayerVehicleManager>(this)),
+		_last_command(std::chrono::steady_clock::now())
 {
 	_ip_address.resize(16);
 	GetPlayerIp(playerid, _ip_address.data(), 16);
@@ -15,23 +17,39 @@ CPlayer::CPlayer(std::uint16_t playerid)
 	_name.resize(24);
 	GetPlayerName(playerid, _name.data(), 24);
 	_name.erase(_name.find('\0'));
-
-	_last_command = std::chrono::steady_clock::now();
 }
 
 void CPlayer::RegisterConnection()
 {
-	auto stmt = server::database->Prepare(
-		"INSERT INTO `CONNECTION_LOGS` "
+	struct data
+	{
+		unsigned int account_id;
+		std::string ip_address;
+	};
+
+	data* thread_data = new data;;
+	thread_data->account_id = _account_id;
+	thread_data->ip_address = _ip_address;
+	uv_work_t* worker = new uv_work_t;
+	worker->data = static_cast<void*>(thread_data);
+
+	uv_queue_work(uv_default_loop(), worker, [](uv_work_t* worker) {
+		data* thread_data = static_cast<data*>(worker->data);
+		auto stmt = server::database->Prepare(
+			"INSERT INTO `CONNECTION_LOGS` "
 			"(ACCOUNT_ID, IP_ADDRESS) "
-		"VALUES " 
+			"VALUES "
 			"(?, ?);"
-	);
+		);
 
-	stmt->Bind<1>(_account_id);
-	stmt->Bind<2>(_ip_address);
+		stmt->Bind<1>(thread_data->account_id);
+		stmt->Bind<2>(thread_data->ip_address);
 
-	stmt->Step();
+		stmt->Step();
+	}, 
+	[](uv_work_t* worker, int status) {
+		delete worker;
+	});
 }
 
 void CPlayer::ToggleWidescreen()
@@ -105,6 +123,23 @@ void CPlayer::StopShopping()
 
 	shop_manager->PlayerData(_playerid) = {};
 	_shop = nullptr;
+}
+
+void CPlayer::PutInVehicle(CVehicle* vehicle, std::uint8_t seat)
+{
+	if (IsPlayerInAnyVehicle(_playerid))
+		RemovePlayerFromVehicle(_playerid);
+
+	PutPlayerInVehicle(_playerid, vehicle->ID(), seat);
+}
+
+CVehicle* CPlayer::GetCurrentVehicle() const
+{
+	std::size_t id = GetPlayerVehicleID(_playerid);
+	if (!id || id == INVALID_VEHICLE_ID)
+		return nullptr;
+
+	return vehicles::vehicle_pool[id].get();
 }
 
 void CPlayer::ResetMoney()

@@ -61,6 +61,7 @@ private:
 	std::unique_ptr<player::CNeedsManager> _needs;
 	std::unique_ptr<CChat> _chat;
 	std::unique_ptr<CKeyGame> _keygame;
+	std::unique_ptr<CPlayerVehicleManager> _vehicles;
 	server::TextDrawIndexManager _td_indexer{};
 	
 	std::string _ip_address;
@@ -101,9 +102,6 @@ private:
 	// Commands
 	std::chrono::steady_clock::time_point _last_command{};
 
-	// Vehicles
-	std::vector<CVehicle*> _vehicles;
-
 	friend cell PlayerDialog_OnDialogResponse(std::uint16_t playerid, short dialogid, bool response, int listitem, std::string inputtext);
 	friend bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* params, cell* retval);
 	friend cell auth::OnPlayerConnect(std::uint16_t playerid);
@@ -128,6 +126,8 @@ public:
 	void SetPosition(const glm::vec4& pos);
 	void SetFacingAngle(float angle);
 	void StopShopping();
+	void PutInVehicle(CVehicle* vehicle, std::uint8_t seatid);
+	CVehicle* GetCurrentVehicle() const;
 
 	// Dialogs
 	void ShowDialog(unsigned char style, const std::string_view caption, const std::string_view info, const std::string_view button1, const std::string_view button2, std::optional<dialog_callback_t> callback = std::nullopt);
@@ -143,6 +143,8 @@ public:
 	[[nodiscard]] inline const auto* Chat() const noexcept { return _chat.get(); }
 	[[nodiscard]] inline auto* KeyGame() noexcept { return _keygame.get(); }
 	[[nodiscard]] inline const auto* KeyGame() const noexcept { return _keygame.get(); }
+	[[nodiscard]] inline auto* Vehicles() noexcept { return _vehicles.get(); }
+	[[nodiscard]] inline const auto* Vehicles() const noexcept { return _vehicles.get(); }
 	IO_GETTER_SETTER(CurrentShop, _shop)
 
 	IO_GETTER_SETTER(TextDraws, _td_indexer)
@@ -167,7 +169,6 @@ public:
 	IO_GETTER_SETTER(LastCommandTick, _last_command)
 	IO_GETTER_SETTER(Job, _job.current_job)
 	IO_GETTER_SETTER(JobData, _job)
-	IO_GETTER_SETTER(Vehicles, _vehicles)
 
 	// Custom data manipulation
 	template<class T>

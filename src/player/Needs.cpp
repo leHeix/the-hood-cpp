@@ -76,6 +76,12 @@ void player::CNeedsManager::ShowBars()
 		textdraws->GetGlobalTextDraws()[i]->Show(_player);
 }
 
+void player::CNeedsManager::HideBars()
+{
+	_bars_shown = false;
+	textdraw_manager["needs"]->Hide(_player);
+}
+
 void player::CNeedsManager::Puke()
 {
 	_player->StopShopping();

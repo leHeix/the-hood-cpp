@@ -30,6 +30,7 @@
 #include <syncstream>
 #include <charconv>
 #include <concepts>
+#include <numeric>
 
 #else
 

@@ -10,7 +10,7 @@ public:
 
 	CPlayer* Add(unsigned short id);
 	void Remove(unsigned short id);
-	void Remove(const CPlayer* player);
+	void Remove(CPlayer* player);
 
 	inline bool Exists(unsigned short id) const
 	{
@@ -24,7 +24,7 @@ public:
 
 		return _players.at(id).get();
 	}
-	CPlayer* Get(unsigned short id);
+	CPlayer* Get(unsigned short id) noexcept;
 
 	// make it iterable
 	auto begin() noexcept(noexcept(_players.begin())) { return _players.begin(); }

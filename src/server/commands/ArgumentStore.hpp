@@ -1,5 +1,11 @@
 #pragma once
 
+class CVehicle;
+namespace vehicles
+{
+	struct stModel;
+}
+
 namespace commands
 {
 	class argument_store
@@ -43,6 +49,9 @@ namespace commands
 
 		argument_store& operator>>(std::string& data);
 		argument_store& operator>>(const final_t& f);
+		argument_store& operator>>(vehicles::stModel& data);
+		argument_store& operator>>(CVehicle*& data);
+
 		template<class T>
 		argument_store& operator>>(T& data)
 		{
