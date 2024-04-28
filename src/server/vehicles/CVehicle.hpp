@@ -540,7 +540,7 @@ public:
 	~CVehicle();
 
 	static CVehicle* create(std::uint16_t modelid, glm::vec4 position, std::pair<int, int> color);
-	// This is so niggerish...
+	// bad approach
 	static void destroy(CVehicle* vehicle);
 
 	inline std::uint16_t ID() const { return _vehicleid; }
